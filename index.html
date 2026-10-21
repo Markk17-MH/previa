@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#141210" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="Juegos para la previa con tu grupo. Un móvil para todos." />
+  <title>Previa</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141210'/%3E%3Ctext x='14' y='47' font-family='Georgia' font-weight='700' font-size='40' fill='%23F2EBDD'%3EP%3C/text%3E%3Ccircle cx='47' cy='44' r='5' fill='%23FF5A36'/%3E%3C/svg%3E" />
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #141210;
+      --ink-2: #1c1a17;
+      --ink-3: #27231f;
+      --line: rgba(242, 235, 221, 0.1);
+      --cream: #f2ebdd;
+      --muted: #a39a8d;
+      --dim: #6f675d;
+      --tomato: #ff5a36;
+      --mustard: #f4b740;
+      --pink: #f49cbb;
+      --mint: #7ed3b0;
+      --lilac: #b8a7f7;
+      --sky: #8cc8f2;
+      --r: 14px;
+      --font: 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; background: var(--ink); color: var(--cream); }
+    body {
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      -webkit-user-select: none;
+      overscroll-behavior: none;
+      min-height: 100dvh;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      z-index: 100;
+    }
+    button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; touch-action: manipulation; }
+    input { font: inherit; user-select: text; -webkit-user-select: text; }
+    ul, ol { margin: 0; padding: 0; list-style: none; }
+    h1, h2, h3, p { margin: 0; }
+    b { font-weight: 700; }
+
+    #app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      padding-block: calc(env(safe-area-inset-top, 0px) + 10px) calc(env(safe-area-inset-bottom, 0px) + 28px);
+      padding-left: max(18px, env(safe-area-inset-left, 0px));
+      padding-right: max(18px, env(safe-area-inset-right, 0px));
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* ---------- chrome ---------- */
+    .top { display: flex; align-items: center; justify-content: space-between; min-height: 44px; gap: 12px; }
+    .top-title { font-weight: 700; font-size: 16px; text-align: center; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .icon-btn {
+      width: 42px; height: 42px; flex: none;
+      display: grid; place-items: center;
+      border-radius: 12px;
+      background: var(--ink-2);
+      border: 1px solid var(--line);
+    }
+    .icon-btn svg { width: 20px; height: 20px; }
+    .icon-btn:active { background: var(--ink-3); }
+    .spacer { width: 42px; flex: none; }
+    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .dim { color: var(--dim); }
+    .center { text-align: center; }
+
+    .wordmark { font-size: 64px; font-weight: 800; letter-spacing: -0.055em; line-height: 0.9; }
+    .wordmark span { color: var(--tomato); }
+    .lede { color: var(--muted); font-size: 17px; max-width: 30ch; margin-top: 12px; }
+    .h2 { font-size: 30px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; }
+    .sub { color: var(--muted); font-size: 15px; }
+    .sub b { color: var(--cream); }
+
+    /* ---------- buttons ---------- */
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; min-height: 56px; padding: 0 20px;
+      border-radius: var(--r);
+      background: var(--cream); color: var(--ink);
+      font-weight: 700; font-size: 17px; letter-spacing: -0.01em;
+      transition: transform 0.08s ease;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn.hot { background: var(--tomato); color: var(--ink); }
+    .btn.alt { background: var(--ink-2); color: var(--cream); border: 1px solid var(--line); }
+    .btn.sm { min-height: 48px; width: auto; font-size: 15px; }
+    .btn[disabled] { opacity: 0.4; pointer-events: none; }
+    .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stackbtns { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+    .link { color: var(--muted); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ---------- home ---------- */
+    .hero { padding: 18px 0 6px; }
+    .group {
+      display: flex; align-items: center; gap: 14px;
+      width: 100%; text-align: left;
+      padding: 14px 16px;
+      border-radius: var(--r);
+      background: var(--ink-2);
+      border: 1px solid var(--line);
+    }
+    .group:active { background: var(--ink-3); }
+    .group-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .group-text small { color: var(--muted); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .group > svg { width: 18px; height: 18px; color: var(--dim); flex: none; }
+    .avatars { display: flex; flex: none; }
+    .avatars .av { margin-left: -8px; border: 2px solid var(--ink-2); }
+    .avatars .av:first-child { margin-left: 0; }
+    .av {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--c, var(--ink-3)); color: var(--ink);
+      font-weight: 800; font-size: 14px; flex: none;
+    }
+    .av.more { background: var(--ink-3); color: var(--muted); font-family: var(--mono); font-size: 11px; font-weight: 500; }
+
+    .list-head { display: flex; justify-content: space-between; align-items: baseline; padding-top: 8px; border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: -18px; }
+    .games li { border-bottom: 1px solid var(--line); }
+    .game {
+      display: flex; align-items: center; gap: 14px;
+      width: 100%; text-align: left; padding: 14px 0;
+    }
+    .game:active { opacity: 0.7; }
+    .tile {
+      width: 52px; height: 52px; border-radius: 12px; flex: none;
+      background: var(--c); color: var(--ink);
+      display: grid; place-items: center;
+      font-family: var(--mono); font-weight: 500; font-size: 15px;
+    }
+    .game-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+    .game-title { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+    .game-blurb { color: var(--muted); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .game-meta { font-family: var(--mono); font-size: 11px; color: var(--dim); text-align: right; line-height: 1.5; flex: none; }
+    .new {
+      font-style: normal; font-family: var(--mono); font-size: 10px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--tomato); border: 1px solid currentColor; border-radius: 6px; padding: 1px 5px;
+    }
+    .foot { color: var(--dim); font-size: 13px; text-align: center; padding-top: 6px; }
+
+    /* ---------- players & settings ---------- */
+    .add { display: flex; gap: 8px; }
+    .add input {
+      flex: 1; min-width: 0; height: 48px; padding: 0 14px;
+      border-radius: 12px; border: 1px solid var(--line);
+      background: var(--ink-2); color: var(--cream); font-size: 16px; outline: none;
+    }
+    .add input:focus { border-color: var(--cream); }
+    .add input::placeholder { color: var(--dim); }
+    .plist li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .pname { flex: 1; font-weight: 700; font-size: 17px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .counter { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; }
+    .counter button { width: 36px; height: 36px; font-size: 18px; color: var(--muted); }
+    .counter b { min-width: 26px; text-align: center; font-family: var(--mono); font-weight: 500; }
+    .x { width: 36px; height: 36px; color: var(--dim); display: grid; place-items: center; }
+    .x svg { width: 16px; height: 16px; }
+    .empty { color: var(--dim); text-align: center; padding: 24px 0; border: 1px dashed var(--line); border-radius: var(--r); }
+    .row-split { display: flex; justify-content: space-between; align-items: center; }
+
+    .setting { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); width: 100%; text-align: left; }
+    .setting-text { flex: 1; display: flex; flex-direction: column; }
+    .setting-text small { color: var(--muted); font-size: 13.5px; }
+    .switch { width: 48px; height: 28px; border-radius: 14px; background: var(--ink-3); border: 1px solid var(--line); position: relative; flex: none; transition: background 0.15s; }
+    .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--muted); transition: transform 0.15s, background 0.15s; }
+    .switch.on { background: var(--tomato); border-color: var(--tomato); }
+    .switch.on::after { transform: translateX(20px); background: var(--ink); }
+    .fine { color: var(--dim); font-size: 13px; }
+
+    /* ---------- intro ---------- */
+    .intro-hero {
+      background: var(--c); color: var(--ink);
+      border-radius: 22px; padding: 22px 22px 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .intro-hero .eyebrow { color: rgba(20, 18, 16, 0.6); }
+    .intro-hero h2 { font-size: 40px; font-weight: 800; letter-spacing: -0.045em; line-height: 0.95; }
+    .intro-hero p { font-size: 16px; line-height: 1.4; max-width: 32ch; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .intro-hero .chips span { font-family: var(--mono); font-size: 12px; border: 1px solid rgba(20, 18, 16, 0.3); border-radius: 8px; padding: 3px 8px; }
+    .rules { counter-reset: r; display: flex; flex-direction: column; gap: 12px; }
+    .rules li { counter-increment: r; display: flex; gap: 12px; font-size: 15.5px; color: var(--cream); }
+    .rules li::before { content: counter(r, decimal-leading-zero); font-family: var(--mono); font-size: 12px; color: var(--dim); padding-top: 3px; flex: none; }
+    .warn { color: var(--mustard); font-size: 15px; }
+
+    /* ---------- cards ---------- */
+    .stack { position: relative; margin: 6px 4px 8px; }
+    .stack::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--ink-3); border-radius: 22px;
+      transform: rotate(2.2deg) translate(4px, 6px);
+    }
+    .card {
+      position: relative;
+      background: var(--c, var(--cream)); color: var(--ink);
+      border-radius: 22px; padding: 22px 22px 20px;
+      min-height: 250px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .card.enter { animation: deal 0.22s cubic-bezier(.2, .8, .3, 1); }
+    @keyframes deal { from { transform: translateY(10px) rotate(-1deg); opacity: 0; } to { transform: none; opacity: 1; } }
+    .card-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(20, 18, 16, 0.6); }
+    .card-text { font-size: 27px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.14; flex: 1; display: flex; align-items: center; }
+    .card-text.long { font-size: 22px; }
+    .card-text.xl { font-size: 44px; font-weight: 800; letter-spacing: -0.04em; justify-content: center; text-align: center; }
+    .card-foot { font-size: 14px; border-top: 1px solid rgba(20, 18, 16, 0.18); padding-top: 12px; }
+
+    .turn { display: flex; align-items: baseline; gap: 10px; }
+    .turn b { font-size: 22px; letter-spacing: -0.02em; }
+
+    .pass { text-align: center; padding: 18px 0 4px; }
+    .pass-name { font-size: 22px; font-weight: 500; color: var(--muted); margin-top: 8px; line-height: 1.2; }
+    .pass-name b { display: block; font-size: 44px; color: var(--cream); font-weight: 800; letter-spacing: -0.04em; }
+    .reveal {
+      width: 100%; min-height: 200px; border-radius: 22px;
+      border: 1.5px dashed rgba(242, 235, 221, 0.25);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    }
+    .reveal b { font-size: 22px; }
+    .reveal span { color: var(--muted); font-size: 14px; }
+    .reveal:active { background: var(--ink-2); }
+    .when { padding: 14px 16px; border-radius: var(--r); background: var(--ink-2); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+    .when p { font-size: 17px; font-weight: 500; }
+
+    .clock { font-family: var(--mono); font-size: 72px; font-weight: 500; letter-spacing: -0.04em; text-align: center; line-height: 1; font-variant-numeric: tabular-nums; }
+    .clock.sm { font-size: 44px; }
+    .peek .chips { margin-top: 10px; }
+    .chip { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--ink-2); font-size: 14px; font-weight: 500; }
+    .chip:active { background: var(--ink-3); }
+    .chip.on { background: var(--mint); color: var(--ink); border-color: var(--mint); }
+    .chip.on.bad { background: var(--tomato); border-color: var(--tomato); }
+
+    .rlist li { padding: 14px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+    .rlist p { font-size: 15px; }
+    .rlist small { color: var(--muted); font-size: 13.5px; }
+    .rlist .chips { margin-top: 6px; }
+
+    .bigchoice {
+      min-height: 180px; border-radius: 22px; background: var(--c); color: var(--ink);
+      display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+      padding: 16px 18px; text-align: left;
+      font-size: 30px; font-weight: 800; letter-spacing: -0.04em;
+    }
+    .bigchoice small { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0; opacity: 0.6; }
+    .bigchoice:active { transform: scale(0.98); }
+
+    .count { font-family: var(--mono); font-size: 96px; text-align: center; line-height: 1; font-weight: 500; padding: 20px 0; }
+    .shout { text-align: center; font-size: 34px; font-weight: 800; letter-spacing: -0.04em; color: var(--tomato); padding: 18px 0 6px; animation: pop 0.25s ease; }
+    @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    .verdict { border-radius: 22px; background: var(--c, var(--tomato)); color: var(--ink); padding: 26px 22px; text-align: center; display: flex; flex-direction: column; gap: 6px; animation: pop 0.25s ease; }
+    .verdict .eyebrow { color: rgba(20, 18, 16, 0.6); }
+    .verdict h2 { font-size: 46px; font-weight: 800; letter-spacing: -0.045em; line-height: 1; word-break: break-word; }
+    .verdict p { font-size: 17px; }
+
+    .fuse {
+      border-radius: 22px; background: var(--ink-2); border: 1px solid var(--line);
+      padding: 32px 20px; text-align: center; display: flex; flex-direction: column; gap: 6px; position: relative; overflow: hidden;
+    }
+    .fuse::after { content: ''; position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: var(--tomato); animation: burn 0.9s ease-in-out infinite alternate; transform-origin: left; }
+    @keyframes burn { from { transform: scaleX(0.15); } to { transform: scaleX(1); } }
+    .fuse b { font-size: 44px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; }
+    .passbtn { min-height: 120px; font-size: 26px; }
+
+    /* playing cards */
+    .table { display: flex; justify-content: center; align-items: flex-end; gap: 14px; padding: 8px 0; }
+    .pcard {
+      width: 150px; height: 214px; border-radius: 16px; background: var(--cream); color: var(--ink);
+      position: relative; flex: none;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+    }
+    .pcard.red { color: #c8361c; }
+    .pcard.small { width: 92px; height: 132px; opacity: 0.5; }
+    .pcard.small .pc-mid { font-size: 44px; }
+    .pcard.small .pc-corner { font-size: 16px; }
+    .pc-corner { position: absolute; top: 10px; left: 12px; display: flex; flex-direction: column; align-items: center; font-weight: 800; font-size: 24px; line-height: 1; }
+    .pc-corner i { font-style: normal; font-size: 0.8em; }
+    .pc-corner.rot { top: auto; left: auto; bottom: 10px; right: 12px; transform: rotate(180deg); }
+    .pc-mid { position: absolute; inset: 0; display: grid; place-items: center; font-size: 76px; }
+    .pcard.back {
+      background: var(--tomato);
+      background-image: repeating-linear-gradient(45deg, transparent 0 10px, rgba(20, 18, 16, 0.12) 10px 12px);
+      display: grid; place-items: center; color: var(--ink);
+      font-weight: 700; font-size: 15px;
+    }
+    .pcard.back span { background: var(--cream); padding: 6px 10px; border-radius: 8px; }
+    .pcard.enter { animation: deal 0.22s cubic-bezier(.2, .8, .3, 1); }
+    .msg { text-align: center; font-size: 17px; font-weight: 500; min-height: 25px; }
+    .msg.bad { color: var(--tomato); }
+    .msg.good { color: var(--mint); }
+    .stats { display: flex; justify-content: center; gap: 18px; }
+    .rule { border-radius: var(--r); background: var(--ink-2); border: 1px solid var(--line); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+    .rule b { font-size: 22px; letter-spacing: -0.02em; }
+    .rule p { color: var(--muted); font-size: 15.5px; }
+
+    /* esto o aquello */
+    .vs { display: grid; gap: 10px; position: relative; }
+    .opt { background: var(--c); color: var(--ink); border-radius: 20px; padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 6px; }
+    .opt small { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; }
+    .opt span { font-size: 25px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.15; }
+    .vs-o { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: var(--cream); display: grid; place-items: center; font-family: var(--mono); font-size: 14px; }
+
+    /* reflejos */
+    .rx {
+      width: 100%; min-height: 360px; border-radius: 22px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      padding: 20px; text-align: center;
+      background: var(--ink-2); border: 1px solid var(--line);
+    }
+    .rx b { font-size: 36px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; }
+    .rx span { color: var(--muted); font-size: 15px; }
+    .rx.wait { background: var(--ink-3); }
+    .rx.go { background: var(--mint); color: var(--ink); border-color: var(--mint); }
+    .rx.go b { font-size: 72px; }
+    .rx.early { background: var(--tomato); color: var(--ink); border-color: var(--tomato); }
+    .rx.early span, .rx.go span { color: rgba(20, 18, 16, 0.7); }
+    .ms { font-family: var(--mono); font-weight: 500; }
+    .ranking li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .ranking .pos { font-family: var(--mono); color: var(--dim); width: 24px; font-size: 13px; }
+    .ranking .nm { flex: 1; font-weight: 700; font-size: 17px; }
+    .ranking .ms { color: var(--muted); }
+    .ranking li:first-child .ms { color: var(--mint); }
+    .ranking li:last-child .ms { color: var(--tomato); }
+
+    /* ruleta */
+    .spin { border-radius: 22px; background: var(--ink-2); border: 1px solid var(--line); padding: 36px 20px; text-align: center; display: flex; flex-direction: column; gap: 8px; }
+    .spin b { font-size: 52px; font-weight: 800; letter-spacing: -0.045em; line-height: 1; min-height: 52px; word-break: break-word; }
+    .spin.done b { color: var(--tomato); }
+
+    /* mimica */
+    .score2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .score2 > div { border-radius: var(--r); border: 1px solid var(--line); background: var(--ink-2); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+    .score2 > div.on { border-color: var(--cream); }
+    .score2 b { font-family: var(--mono); font-size: 34px; font-weight: 500; line-height: 1.1; }
+    .score2 span { color: var(--muted); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* sheet */
+    .scrim { position: fixed; inset: 0; background: rgba(10, 9, 8, 0.7); z-index: 50; animation: fade 0.15s; }
+    .sheet {
+      position: fixed; left: 50%; bottom: 0; transform: translateX(-50%);
+      width: 100%; max-width: 480px; z-index: 51;
+      background: var(--ink-2); border: 1px solid var(--line); border-bottom: 0;
+      border-radius: 22px 22px 0 0;
+      padding: 22px 20px calc(env(safe-area-inset-bottom) + 20px);
+      display: flex; flex-direction: column; gap: 14px;
+      animation: up 0.2s cubic-bezier(.2, .8, .3, 1);
+      max-height: 85dvh; overflow-y: auto;
+    }
+    .sheet h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; }
+    .sheet-what { font-size: 21px; font-weight: 700; line-height: 1.2; }
+    .sheet-when { color: var(--mustard); font-size: 16px; }
+    @keyframes fade { from { opacity: 0; } }
+    @keyframes up { from { transform: translate(-50%, 30px); opacity: 0; } }
+
+    .gate { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 14px; padding-bottom: 12px; }
+    .gate .wordmark { font-size: 88px; }
+    .gate .lede { margin: 0 0 18px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+  'use strict';
+
+  // ---------- storage ----------
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('previa:' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem('previa:' + k, JSON.stringify(v)); } catch {} }
+  };
+
+  // ---------- sound & haptics ----------
+  const sound = {
+    ctx: null,
+    on: store.get('sound', true),
+    init() {
+      if (!this.ctx) { const C = window.AudioContext || window.webkitAudioContext; if (C) this.ctx = new C(); }
+      if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+    },
+    buzz(ms) { try { navigator.vibrate && navigator.vibrate(ms); } catch {} },
+    tone(type, f1, f2, dur, vol, delay = 0) {
+      if (!this.on) return;
+      this.init();
+      if (!this.ctx) return;
+      try {
+        const t = this.ctx.currentTime + delay;
+        const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(f1, t);
+        if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+        g.gain.setValueAtTime(vol, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        o.connect(g); g.connect(this.ctx.destination);
+        o.start(t); o.stop(t + dur + 0.02);
+      } catch {}
+    },
+    click() { this.tone('sine', 700, 320, 0.05, 0.1); this.buzz(10); },
+    flip() { this.tone('triangle', 420, 900, 0.08, 0.12); this.buzz(15); },
+    tick(p = 750) { this.tone('square', p, 0, 0.04, 0.07); this.buzz(20); },
+    boom() { this.tone('sawtooth', 160, 30, 0.7, 0.3); this.buzz(400); },
+    win() { [523, 659, 784].forEach((f, i) => this.tone('sine', f, 0, 0.2, 0.12, i * 0.08)); this.buzz(40); }
+  };
+
+  // ---------- content ----------
+  const WHAT = [
+    'Hacer cinco flexiones mirando fijamente a {x}',
+    'Darle un beso en la mejilla a {x} y decirle «gracias por existir»',
+    'Sentarte en el regazo de {x} diez segundos como si no hubiera sitio',
+    'Robarle un sorbo del vaso a {x} sin pedir permiso',
+    'Decir «eso es lo que me dijeron anoche» con cara de pillo',
+    'Quitarte algo (chaqueta, pulsera, gorra) y ponérselo a {x}',
+    'Cantarle al oído a {x} el estribillo de una canción romántica',
+    'Chocar los cinco con {x} y dejar los dedos entrelazados',
+    'Proponer un brindis por los ojos de {x}',
+    'Mirar a {x} con cara de sospecha durante cinco segundos',
+    'Pedirle a {x} que te haga un masaje en el hombro porque «te has dado un tirón»',
+    'Soltarle un piropo a {x} sin reírte',
+    'Imitar la risa de {x} justo después de que se ría',
+    'Preguntarle a {x} con mucha seriedad cuál es su signo del zodiaco',
+    'Contar una anécdota inventada en la que sale {x}',
+    'Hacerte una foto con {x} poniendo la misma cara que {x}'
+  ];
+  const WHEN = [
+    'cuando {x} beba de su vaso',
+    'cuando {x} mire el móvil',
+    'cuando {x} se ría a carcajadas',
+    'cuando alguien diga «fiesta», «salir» o «discoteca»',
+    'cuando {x} se toque el pelo o la cara',
+    'cuando alguien mencione a un ex',
+    'cuando haya un silencio de más de tres segundos',
+    'cuando {x} cambie de postura en el asiento',
+    'cuando alguien proponga pedir comida o un brindis',
+    'cuando alguien diga la hora',
+    'cuando {x} se levante'
+  ];
+  const TOPICS = [
+    '¿Cuál es la mentira más absurda que has dicho para ligar?',
+    '¿Qué es lo más vergonzoso que alguien ha visto en tu móvil?',
+    '¿Cuál ha sido tu peor cita?',
+    '¿Qué hiciste de fiesta que todavía te da vergüenza recordar?',
+    '¿Cuál es tu red flag que escondes en las primeras citas?',
+    '¿Cuál ha sido la noche más surrealista de tu vida?',
+    'Si mañana te tocara la lotería, ¿a quién de aquí se lo dirías primero?',
+    '¿Qué canción te pone triste aunque no lo admitas?',
+    '¿A quién de tus ex volverías a escribir esta noche?',
+    '¿Qué es lo más caro que has comprado por impulso?',
+    '¿Cuál es la mejor excusa que has puesto para no ir a un plan?',
+    'Si tu vida fuera una serie, ¿cómo se llamaría el capítulo de hoy?'
+  ];
+
+  // a: 1 marks items that only make sense with alcohol (hidden in modo sin alcohol)
+  const TRUTHS = [
+    { t: '¿Cuál es la mentira más gorda que les has contado a tus padres para salir?', n: 2 },
+    { t: '¿Has besado a más de dos personas en la misma noche? Cuéntalo.', n: 3 },
+    { t: '¿Quién de esta habitación te parece más atractivo o atractiva?', n: 3 },
+    { t: '¿Alguna vez has mirado el móvil de tu pareja a escondidas?', n: 2 },
+    { t: '¿Tienes alguna fantasía que nunca hayas dicho en voz alta?', n: 4 },
+    { t: '¿Te liarías con el ex de alguien de este grupo si nadie se enterase?', n: 3 },
+    { t: '¿Has soñado alguna vez con alguien de aquí?', n: 4 },
+    { t: '¿A quién de este grupo bloquearías una semana si pudieras?', n: 3 },
+    { t: '¿Cuál es el mensaje más vergonzoso que has enviado borracho o borracha?', n: 2, a: 1 },
+    { t: '¿Qué es lo primero que miras en alguien que te gusta?', n: 1 },
+    { t: '¿Cuál ha sido tu peor beso y con quién?', n: 3 },
+    { t: '¿Qué es lo que más te molesta de la persona a tu izquierda?', n: 2 },
+    { t: 'Enseña tu última búsqueda en internet.', n: 3 },
+    { t: '¿Has fingido alguna vez estar enfermo o enferma para no quedar con alguien de aquí?', n: 2 },
+    { t: '¿Qué secreto de alguien de este grupo conoces y nadie más sabe? Sin decir de quién.', n: 2 }
+  ];
+  const DARES = [
+    { t: 'Manda «te echo de menos» a la última persona con la que hablaste por WhatsApp.', n: 3 },
+    { t: 'Baila treinta segundos encima de una silla sin música.', n: 2 },
+    { t: 'Enseña al grupo la última foto de tu galería.', n: 3 },
+    { t: 'Bebe del vaso de la persona a tu izquierda con las manos a la espalda.', n: 2, a: 1 },
+    { t: 'Deja que la persona a tu derecha suba una historia desde tu cuenta.', n: 4 },
+    { t: 'Haz un masaje de hombros a quien tengas enfrente durante treinta segundos.', n: 2 },
+    { t: 'Habla con acento argentino hasta tu próximo turno.', n: 2 },
+    { t: 'Deja que el grupo te escriba algo en la mano con boli.', n: 2 },
+    { t: 'Llama a alguien de tu familia y dile que le quieres mucho. Sin explicar nada.', n: 3 },
+    { t: 'Imita a alguien del grupo hasta que adivinen quién es.', n: 1 },
+    { t: 'Declárale tu amor a la lámpara más cercana durante veinte segundos.', n: 2 },
+    { t: 'Haz tu mejor imitación de un presentador de telediario anunciando lo que hay en la mesa.', n: 1 },
+    { t: 'Intercambia una prenda con la persona de tu izquierda hasta el final de la previa.', n: 3 },
+    { t: 'Lee en voz alta el último mensaje que has enviado.', n: 3 }
+  ];
+  const NUNCA = [
+    'he mirado el móvil de mi pareja a escondidas',
+    'me he liado con el ex de un amigo o amiga',
+    'he vomitado en un taxi',
+    'he mandado un mensaje a las 4 de la mañana del que me arrepentí',
+    'me he liado con alguien en el baño de una discoteca',
+    'he pensado en alguien de este grupo de forma poco inocente',
+    'me he despertado sin saber cómo llegué a casa',
+    'he dicho «te quiero» sin sentirlo',
+    'me he colado en un sitio sin pagar',
+    'he stalkeado a un ex hasta fotos de hace años',
+    'he dado un like sin querer a una foto antigua',
+    'he ligado por una aplicación',
+    'he tenido una cita a ciegas',
+    'me he quedado dormido o dormida en una fiesta',
+    'he perdido el móvil de fiesta',
+    'he fingido no ver a alguien por la calle',
+    'he mentido sobre mi edad',
+    'he llorado en una discoteca',
+    'he cantado en un karaoke delante de desconocidos',
+    'he salido de casa en pijama a comprar',
+    'he tenido un crush con un profesor o profesora',
+    'he usado la excusa de «me he quedado sin batería»',
+    'he hecho ghosting',
+    'me han hecho ghosting',
+    'me he enamorado de alguien en una noche',
+    'he olvidado el nombre de alguien con quien me he liado',
+    'he dormido en un sitio que no era una cama',
+    'he ido a trabajar o a clase sin dormir',
+    'he cotilleado el móvil de alguien de esta mesa',
+    'me he hecho un tatuaje del que me arrepiento'
+  ];
+  const PROBABLE = [
+    'acabe esta noche con una multa',
+    'se enamore de quien le sirva la copa',
+    'pierda el móvil o las llaves antes de las cuatro',
+    'vuelva con su ex antes de que acabe el mes',
+    'se gaste más de cien euros esta noche sin darse cuenta',
+    'llore en el taxi de vuelta',
+    'se case primero',
+    'se haga famoso o famosa por algo absurdo',
+    'desaparezca de la fiesta sin despedirse',
+    'conteste a un mensaje de su ex esta noche',
+    'llegue tarde hasta a su propia boda',
+    'se quede dormido o dormida antes de la una',
+    'se pelee con el portero',
+    'acabe bailando encima de una mesa',
+    'tenga un perfil secreto en redes',
+    'se mude a otro país sin avisar',
+    'se ría en el momento más inapropiado',
+    'adopte cinco gatos',
+    'mande un audio de diez minutos',
+    'se olvide del cumpleaños de su pareja'
+  ];
+  const CATS = [
+    'Marcas de bebida', 'Sitios raros para dar un beso', 'Excusas para no contestar un mensaje',
+    'Canciones de reguetón', 'DJs o artistas de festival', 'Cosas que encuentras en el suelo de una discoteca',
+    'Mentiras de primera cita', 'Series de Netflix', 'Cosas que llevas en el bolsillo',
+    'Palabras que riman con «-ción»', 'Futbolistas', 'Marcas de ropa', 'Ciudades de España',
+    'Cosas que dices cuando vas pedo', 'Apps del móvil', 'Comida de madrugada',
+    'Cosas que hay en un baño', 'Nombres de ex famosos', 'Películas de miedo', 'Cosas que pican'
+  ];
+  const WORDS = {
+    'Comida': ['Croqueta', 'Paella', 'Kebab', 'Sushi', 'Tortilla', 'Churros', 'Pizza', 'Gazpacho', 'Nachos', 'Fabada'],
+    'Lugares': ['Aeropuerto', 'Gimnasio', 'Hospital', 'Playa', 'Biblioteca', 'Discoteca', 'Iglesia', 'Mercadona', 'Camping', 'Cárcel'],
+    'Profesiones': ['Bombero', 'Dentista', 'Influencer', 'Fontanero', 'Azafata', 'Policía', 'Profesor', 'Cura', 'Camarero', 'Astronauta'],
+    'Objetos': ['Paraguas', 'Cepillo de dientes', 'Mechero', 'Ventilador', 'Espejo', 'Tostadora', 'Chancla', 'Calcetín', 'Llavero', 'Almohada'],
+    'Fiesta': ['Chupito', 'Portero', 'Guardarropa', 'Reservado', 'Cubata', 'Photocall', 'Afterparty', 'Karaoke', 'Barra libre', 'Resaca'],
+    'Animales': ['Pingüino', 'Mosquito', 'Jirafa', 'Pulpo', 'Canguro', 'Murciélago', 'Caracol', 'Flamenco', 'Perezoso', 'Tiburón']
+  };
+  const LIE_TOPICS = [
+    'Tu infancia', 'Tu peor cita', 'Algo que has roto', 'Un viaje', 'Tu primer trabajo', 'Una noche de fiesta',
+    'Un famoso que has visto', 'Algo ilegal (poco)', 'Tu familia', 'Un ex', 'Algo que te da miedo', 'Tu mayor manía'
+  ];
+  const PAIRS = [
+    ['Playa', 'Montaña'], ['Ligar en la discoteca', 'Ligar por app'], ['Previa en casa', 'Cena fuera'],
+    ['Perder el móvil', 'Perder la cartera'], ['Saber leer mentes', 'Ser invisible'], ['Reguetón toda la noche', 'Techno toda la noche'],
+    ['Tu ex en tu boda', 'Tu jefe en tu boda'], ['Sin redes un año', 'Sin música un año'], ['Pizza con piña', 'Tortilla sin cebolla'],
+    ['Vivir sin café', 'Vivir sin queso'], ['Que lean tus mensajes', 'Que vean tu historial'], ['Bailar fatal', 'Cantar fatal'],
+    ['Viajar al pasado', 'Viajar al futuro'], ['Cita con tu crush famoso', '1.000 € ahora mismo'], ['Ser muy alto', 'Ser muy bajo'],
+    ['Madrugar siempre', 'Trasnochar siempre'], ['Gato', 'Perro'], ['Primera cita en el cine', 'Primera cita en un bar'],
+    ['Saber cómo mueres', 'Saber cuándo mueres'], ['Ducha fría', 'Agua del grifo caliente'], ['Mensaje de voz', 'Llamada'],
+    ['Vivir en Madrid', 'Vivir en Barcelona'], ['Ir siempre de traje', 'Ir siempre en chándal'], ['Volver con tu ex', 'Quedarte solo o sola un año'],
+    ['Hacer el ridículo en TV', 'Hacer el ridículo en tu trabajo']
+  ];
+  const MIMICA = [
+    'Titanic', 'Tiburón', 'Spiderman', 'El Rey León', 'Harry Potter', 'Shrek', 'Frozen', 'Matrix',
+    'Hacer surf', 'Montar en bici', 'Cocinar una paella', 'Ir al dentista', 'Atracar un banco', 'Primera cita',
+    'Pescar', 'Bañar a un perro', 'Cambiar un pañal', 'Hacer yoga', 'Perder el autobús', 'Pedir un taxi',
+    'Gorila', 'Pingüino', 'Canguro', 'Serpiente', 'Pulpo', 'Gallina',
+    'Lavadora', 'Paraguas', 'Secador de pelo', 'Selfie', 'Batidora', 'Ascensor',
+    'Bombero', 'Peluquero', 'DJ', 'Árbitro', 'Mago', 'Camarero', 'Portero de discoteca', 'Profesor de autoescuela'
+  ];
+  const ROULETTE = [
+    { t: () => `${pen(2)} para ti.`, self: 2 },
+    { t: () => `Reparte ${pen(3)} como quieras.` },
+    { t: () => 'Elige a alguien: verdad o reto, y no puede negarse.' },
+    { t: () => 'Te libras esta ronda.' },
+    { t: () => `Brindis: todo el grupo, ${pen(1)}.` },
+    { t: () => 'Cambia de sitio con quien tengas enfrente.' },
+    { t: () => 'Imita a alguien del grupo hasta que lo adivinen.' },
+    { t: () => `Hasta tu próximo turno no puedes decir «sí» ni «no». Cada fallo, ${pen(1)}.` },
+    { t: () => 'La persona a tu izquierda elige tu castigo.' },
+    { t: () => `Enseña tu última búsqueda en el móvil o ${pen(2)}.` },
+    { t: () => 'Cuenta un secreto pequeño. El grupo decide si vale.' },
+    { t: () => `Elige pareja: hasta la próxima ronda, cuando uno pierda, pierden los dos.` }
+  ];
+  const KINGS_RULES = {
+    1: () => ({ t: 'Cascada', d: S.sober ? 'Todos a la vez hacéis la cosa más ridícula que se le ocurra a quien sacó la carta. Nadie para hasta que pare el de su izquierda.' : 'Empieza quien sacó la carta y todos beben detrás. Nadie para hasta que pare el de su izquierda.' }),
+    2: () => ({ t: 'Para ti no', d: `Manda ${pen(2)} a quien quieras.` }),
+    3: () => ({ t: 'Para ti', d: `${pen(2)} para quien sacó la carta.` }),
+    4: () => ({ t: 'Suelo', d: `Todos tocan el suelo. El último, ${pen(1)}.` }),
+    5: () => ({ t: 'Pulgar', d: `Cuando quieras, pon el pulgar sobre la mesa en silencio. El último en darse cuenta, ${pen(1)}. Dura hasta el próximo 5.` }),
+    6: () => ({ t: 'Cielo', d: `Todos señalan arriba. El último, ${pen(1)}.` }),
+    7: () => ({ t: 'Categoría', d: `Elige una categoría. Por turnos, cada uno dice algo. Quien se quede en blanco o repita, ${pen(1)}.` }),
+    8: () => ({ t: 'Compañero', d: 'Elige pareja. Hasta el próximo 8, cuando a uno le toque castigo, al otro también.' }),
+    9: () => ({ t: 'Rima', d: `Di una palabra. Por turnos, rimad con ella. Quien falle, ${pen(1)}.` }),
+    10: () => ({ t: 'Yo nunca', d: 'Una ronda de «yo nunca» empezando por quien sacó la carta.' }),
+    11: () => ({ t: 'Norma', d: `Inventa una norma que dure toda la partida. Quien la rompa, ${pen(1)}.` }),
+    12: () => ({ t: 'Preguntas', d: `Hazle una pregunta a alguien. Tiene que responder con otra pregunta, y así sucesivamente. Quien falle, ${pen(1)}.` }),
+    13: () => ({ t: 'Rey', d: S.sober ? 'Anota una cosa en el bote: el que saque el cuarto rey hará lo que diga el bote.' : 'Echa un poco de tu vaso en la copa del centro. Quien saque el cuarto rey se la bebe.' })
+  };
+
+  // ---------- state ----------
+  const S = {
+    view: store.get('adult', false) ? 'home' : 'gate',
+    players: store.get('players', []),
+    sober: store.get('sober', false),
+    game: null,
+    g: {},
+    sheet: null,
+    focus: null
+  };
+  const savePlayers = () => store.set('players', S.players);
+
+  // ---------- helpers ----------
+  const $app = document.getElementById('app');
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const rand = n => Math.floor(Math.random() * n);
+  const pick = a => a[rand(a.length)];
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const bag = list => { let pool = []; return () => { if (!pool.length) pool = shuffle(list); return pool.pop(); }; };
+  const clean = list => S.sober ? list.filter(x => !x.a) : list;
+  const mod = i => ((i % S.players.length) + S.players.length) % S.players.length;
+  const name = i => esc(S.players[mod(i)].name);
+  const unit = () => S.sober ? 'puntos' : 'tragos';
+  const pen = n => S.sober ? `${n} ${n === 1 ? 'punto' : 'puntos'}` : `${n} ${n === 1 ? 'trago' : 'tragos'}`;
+  const addPen = (i, n) => { const p = S.players[mod(i)]; p.score = Math.max(0, (p.score || 0) + n); savePlayers(); };
+  const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  const COLORS = ['tomato', 'mustard', 'pink', 'mint', 'lilac', 'sky'];
+  const colorOf = i => `var(--${COLORS[i % COLORS.length]})`;
+
+  let clocks = [];
+  const every = (ms, fn) => clocks.push(setInterval(fn, ms));
+  const after = (ms, fn) => clocks.push(setTimeout(fn, ms));
+  const clearClock = () => { clocks.forEach(id => { clearInterval(id); clearTimeout(id); }); clocks = []; };
+
+  const ic = {
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+    chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+    gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
+    help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17.5" r=".6" fill="currentColor"/></svg>',
+    x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+  };
+
+  let lastCard = null;
+  function card(label, text, color = 'cream', foot = '', extra = '') {
+    const key = label + '|' + text;
+    const enter = key !== lastCard ? ' enter' : '';
+    lastCard = key;
+    const size = extra || (text.length > 110 ? 'long' : '');
+    return `<div class="stack"><article class="card${enter}" style="--c:var(--${color})">
+      <span class="card-label">${label}</span>
+      <p class="card-text ${size}">${text}</p>
+      ${foot ? `<span class="card-foot">${foot}</span>` : ''}
+    </article></div>`;
+  }
+  const turn = i => `<div class="turn"><span class="eyebrow">Turno de</span><b>${name(i)}</b></div>`;
+
+  // shared 3-2-1 countdown stored in S.g.cd (null → 3 → 2 → 1 → 0)
+  function countdown() {
+    S.g.cd = 3; sound.tick(600); render();
+    every(1000, () => {
+      S.g.cd--;
+      if (S.g.cd > 0) sound.tick(600 + (3 - S.g.cd) * 200);
+      else { clearClock(); sound.boom(); }
+      render();
+    });
+  }
+  const countView = (cd, shout) => cd > 0 ? `<div class="count">${cd}</div>` : `<div class="shout">${shout}</div>`;
+
+  // playing cards
+  const SUITS = { h: '♥', d: '♦', c: '♣', s: '♠' };
+  const LABELS = { 1: 'A', 11: 'J', 12: 'Q', 13: 'K' };
+  const newDeck = () => shuffle(Object.keys(SUITS).flatMap(s => Array.from({ length: 13 }, (_, i) => ({ s, v: i + 1 }))));
+  function face(c, cls = '') {
+    const red = c.s === 'h' || c.s === 'd';
+    const l = LABELS[c.v] || c.v;
+    return `<div class="pcard ${red ? 'red' : ''} ${cls}">
+      <span class="pc-corner">${l}<i>${SUITS[c.s]}</i></span>
+      <span class="pc-mid">${SUITS[c.s]}</span>
+      <span class="pc-corner rot">${l}<i>${SUITS[c.s]}</i></span>
+    </div>`;
+  }
+
+  // ---------- games ----------
+  const GAMES = [
+    {
+      id: 'mision', title: 'Misión secreta', color: 'tomato', min: 3, time: '10 min',
+      short: 'Una acción, un momento, diez minutos.',
+      blurb: 'Cada uno recibe algo que hacer y el momento exacto en que hacerlo. Que no se note.',
+      rules: () => [
+        'Pasad el móvil. Cada uno ve en secreto su misión: un «qué» y un «cuándo».',
+        'Durante diez minutos hablad con normalidad. La app os da temas.',
+        'Cuando ocurra tu «cuándo», haz tu «qué» sin que nadie lo pille.',
+        `Al final se revela todo. Si la hiciste sin que te pillaran, repartes ${pen(3)}. Si te pillaron, ${pen(2)} para ti.`
+      ],
+      start() {
+        const w = bag(WHAT), wh = bag(WHEN);
+        const m = S.players.map((p, i) => {
+          const t = pick(S.players.filter((_, j) => j !== i)).name;
+          return { what: w().replaceAll('{x}', t), when: wh().replaceAll('{x}', t) };
+        });
+        const tb = bag(TOPICS);
+        S.g = { phase: 'deal', i: 0, shown: false, m, left: 600, tb, topic: tb(), marks: {} };
+      },
+      view() {
+        const g = S.g, n = S.players.length;
+        if (g.phase === 'deal') {
+          const me = g.m[g.i];
+          return `<div class="pass"><span class="eyebrow">Misión ${g.i + 1} de ${n}</span><h2 class="pass-name">Pásale el móvil a<b>${name(g.i)}</b></h2></div>
+          ${!g.shown
+            ? `<button class="reveal" data-act="m-show"><b>Ver mi misión</b><span>Que nadie más mire la pantalla</span></button>`
+            : `${card('Qué', esc(me.what), 'tomato')}
+               <div class="when"><span class="eyebrow">Cuándo</span><p>${esc(me.when[0].toUpperCase() + me.when.slice(1))}</p></div>
+               <button class="btn" data-act="m-next">${g.i + 1 < n ? 'Ocultar y pasar' : 'Ocultar y empezar'}</button>`}`;
+        }
+        if (g.phase === 'play') {
+          return `<div><div class="clock" id="clock">${fmt(g.left)}</div><p class="sub center" style="margin-top:6px">Hablad con normalidad. Cuando pase tu «cuándo», haz tu «qué».</p></div>
+          ${card('Tema para hablar', g.topic, 'mustard')}
+          <button class="btn alt" data-act="m-topic">Otro tema</button>
+          <div class="peek"><span class="eyebrow">¿Se te ha olvidado? Toca tu nombre</span>
+            <div class="chips">${S.players.map((p, i) => `<button class="chip" data-act="m-peek" data-arg="${i}">${esc(p.name)}</button>`).join('')}</div>
+          </div>
+          <button class="link" data-act="m-end" style="align-self:center">Terminar ya y revelar</button>`;
+        }
+        return `<div><h2 class="h2">Se acabó el tiempo</h2><p class="sub" style="margin-top:8px">Leed cada misión en voz alta. Si la hizo sin que le pillaran, reparte ${pen(3)}. Si le pillaron, ${pen(2)} para quien la tenía.</p></div>
+        <ul class="rlist">${S.players.map((p, i) => `<li>
+          <b>${esc(p.name)}</b><p>${esc(g.m[i].what)}</p><small>${esc(g.m[i].when)}</small>
+          <div class="chips"><button class="chip ${g.marks[i] === 'ok' ? 'on' : ''}" data-act="m-mark" data-arg="${i}:ok">La hizo</button><button class="chip ${g.marks[i] === 'caught' ? 'on bad' : ''}" data-act="m-mark" data-arg="${i}:caught">Le pillaron</button></div>
+        </li>`).join('')}</ul>
+        <button class="btn hot" data-act="restart">Otra ronda</button>`;
+      }
+    },
+    {
+      id: 'verdad', title: 'Verdad o reto', color: 'sky', min: 2, time: '20–40 min',
+      short: 'El de siempre, con preguntas que escuecen.',
+      blurb: 'Preguntas que nadie quiere contestar y retos que nadie quiere hacer.',
+      rules: () => [
+        'En tu turno eliges verdad o reto.',
+        'Si cumples, pasa el turno.',
+        'Si te niegas, te llevas lo que marque la carta.'
+      ],
+      start() { S.g = { turn: 0, card: null, kind: null, tb: bag(clean(TRUTHS)), db: bag(clean(DARES)) }; },
+      view() {
+        const g = S.g;
+        if (!g.card) {
+          return `${turn(g.turn)}
+          <div class="duo">
+            <button class="bigchoice" style="--c:var(--sky)" data-act="v-pick" data-arg="t"><small>A</small>Verdad</button>
+            <button class="bigchoice" style="--c:var(--tomato)" data-act="v-pick" data-arg="d"><small>B</small>Reto</button>
+          </div>`;
+        }
+        return `${turn(g.turn)}
+        ${card(g.kind === 't' ? 'Verdad' : 'Reto', g.card.t, g.kind === 't' ? 'sky' : 'tomato', `Si te niegas: ${pen(g.card.n)}`)}
+        <div class="duo"><button class="btn alt" data-act="v-done" data-arg="no">Me niego</button><button class="btn hot" data-act="v-done" data-arg="ok">Hecho</button></div>`;
+      }
+    },
+    {
+      id: 'nunca', title: 'Yo nunca', color: 'mint', min: 2, time: '15–30 min',
+      short: 'Quien lo haya hecho, lo paga.',
+      blurb: 'Una frase, y quien lo haya hecho no puede disimular.',
+      rules: () => [
+        'Alguien lee la frase en voz alta.',
+        S.sober ? 'Quien lo haya hecho, se apunta un punto en el marcador.' : 'Quien lo haya hecho, bebe.',
+        'Las explicaciones son opcionales, pero recomendables.'
+      ],
+      start() { const b = bag(NUNCA); S.g = { b, cur: b(), n: 1 }; },
+      view() {
+        const g = S.g;
+        return `${card(`Nº ${g.n}`, `Yo nunca ${g.cur}.`, 'mint', S.sober ? 'Si lo has hecho, suma un punto.' : 'Si lo has hecho, bebe.')}
+        <div class="stackbtns"><button class="btn" data-act="n-next">Siguiente</button></div>`;
+      }
+    },
+    {
+      id: 'probable', title: 'Quién es más probable', color: 'lilac', min: 3, time: '15–25 min',
+      short: 'A la de tres, todos señalan.',
+      blurb: 'Descubre lo que tu grupo piensa de ti de verdad.',
+      rules: () => [
+        'Leed la frase.',
+        'Cuenta atrás y, a la de tres, todos señalan a alguien a la vez.',
+        `El más señalado se lleva ${pen(1)} por cada dedo.`
+      ],
+      start() { const b = bag(PROBABLE); S.g = { b, cur: b(), cd: null }; },
+      view() {
+        const g = S.g;
+        return `${card('Quién es más probable que…', g.cur, 'lilac')}
+        ${g.cd === null
+          ? `<div class="stackbtns"><button class="btn hot" data-act="countdown">Contar hasta tres</button><button class="btn alt" data-act="p-next">Otra frase</button></div>`
+          : g.cd > 0 ? countView(g.cd)
+          : `${countView(0, '¡Señalad!')}<p class="sub center">El más señalado: ${pen(1)} por dedo.</p><button class="btn" data-act="p-next">Siguiente</button>`}`;
+      }
+    },
+    {
+      id: 'bomba', title: 'La bomba', color: 'mustard', min: 2, time: '10–20 min',
+      short: 'Di una palabra y pasa el móvil. Rápido.',
+      blurb: 'Una categoría, un temporizador que nadie ve y un móvil que quema.',
+      rules: () => [
+        'Sale una categoría.',
+        'Quien tiene el móvil dice algo que encaje, pulsa «Pasar» y lo pasa a su derecha.',
+        'No se puede repetir. Nadie sabe cuánto dura la mecha.',
+        `A quien le explote en las manos, ${pen(3)}.`
+      ],
+      start() { const b = bag(CATS); S.g = { b, cat: b(), state: 'idle', holder: rand(S.players.length) }; },
+      view() {
+        const g = S.g;
+        if (g.state === 'idle') {
+          return `${card('Categoría', g.cat, 'mustard', 'Di algo que encaje y pasa el móvil a tu derecha.')}
+          <p class="sub center">Empieza <b>${name(g.holder)}</b></p>
+          <div class="stackbtns"><button class="btn hot" data-act="b-light">Encender la mecha</button><button class="btn alt" data-act="b-cat">Otra categoría</button></div>`;
+        }
+        if (g.state === 'running') {
+          return `<p class="sub center">${g.cat}</p>
+          <div class="fuse"><span class="eyebrow">Lo tiene</span><b id="holder">${name(g.holder)}</b></div>
+          <button class="btn hot passbtn" data-tap="b-pass">Pasar</button>`;
+        }
+        return `<div class="verdict"><span class="eyebrow">Explotó en manos de</span><h2>${name(g.holder)}</h2><p>${pen(3)}</p></div>
+        <div class="stackbtns"><button class="btn" data-act="b-again">Otra ronda</button></div>`;
+      }
+    },
+    {
+      id: 'impostor', title: 'El impostor', color: 'pink', min: 3, time: '15–30 min',
+      short: 'Todos saben la palabra menos uno.',
+      blurb: 'Todos ven la misma palabra menos uno, que tendrá que improvisar.',
+      rules: () => [
+        'Pasad el móvil. Todos ven la palabra secreta menos el impostor.',
+        'Por turnos, cada uno dice una palabra relacionada. Ni muy obvia ni muy rara.',
+        'Tras dos vueltas, votad a la vez quién es el impostor.',
+        `Si le pilláis, ${pen(3)} para el impostor. Si no, ${pen(1)} para cada uno de los demás.`
+      ],
+      start() {
+        const cat = pick(Object.keys(WORDS));
+        S.g = { phase: 'deal', i: 0, shown: false, cat, word: pick(WORDS[cat]), imp: rand(S.players.length), starter: rand(S.players.length) };
+      },
+      view() {
+        const g = S.g, n = S.players.length;
+        if (g.phase === 'deal') {
+          return `<div class="pass"><span class="eyebrow">${g.i + 1} de ${n}</span><h2 class="pass-name">Pásale el móvil a<b>${name(g.i)}</b></h2></div>
+          ${!g.shown
+            ? `<button class="reveal" data-act="i-show"><b>Ver mi palabra</b><span>Que nadie más mire la pantalla</span></button>`
+            : `${g.i === g.imp
+                ? card('Tu papel', 'Eres el impostor', 'tomato', `Categoría: ${g.cat}. Escucha y disimula.`, 'xl')
+                : card('La palabra', g.word, 'mint', `Categoría: ${g.cat}`, 'xl')}
+               <button class="btn" data-act="i-next">${g.i + 1 < n ? 'Ocultar y pasar' : 'Ocultar y empezar'}</button>`}`;
+        }
+        if (g.phase === 'talk') {
+          return `<div class="verdict" style="--c:var(--pink)"><span class="eyebrow">Empieza</span><h2>${name(g.starter)}</h2><p>y seguid hacia la derecha</p></div>
+          <p class="sub">Cada uno dice una palabra relacionada con la secreta. Dos vueltas y votad todos a la vez señalando.</p>
+          <div class="stackbtns"><button class="btn hot" data-act="i-reveal">Revelar impostor</button></div>`;
+        }
+        return `<div class="verdict"><span class="eyebrow">El impostor era</span><h2>${name(g.imp)}</h2><p>La palabra era <b>${g.word}</b></p></div>
+        <p class="sub">Si le habéis pillado, ${pen(3)} para el impostor. Si no, ${pen(1)} para cada uno de los demás. Si el impostor adivina la palabra, se libra.</p>
+        <div class="stackbtns"><button class="btn" data-act="restart">Otra ronda</button></div>`;
+      }
+    },
+    {
+      id: 'mentira', title: 'Dos verdades, una mentira', color: 'tomato', min: 3, time: '20–35 min',
+      short: 'Tres historias. Una es falsa.',
+      blurb: 'Cuenta tres cosas sobre ti. El grupo tiene que oler cuál te has inventado.',
+      rules: () => [
+        'La app te da un tema. Cuenta tres cosas sobre él: dos ciertas y una inventada.',
+        'Cuenta atrás y todos enseñan a la vez 1, 2 o 3 dedos.',
+        `Quien falle, ${pen(1)}. Si nadie acierta, el que contaba reparte ${pen(3)}.`
+      ],
+      start() { const b = bag(LIE_TOPICS); S.g = { b, topic: b(), turn: 0, cd: null }; },
+      view() {
+        const g = S.g;
+        if (g.cd === null) {
+          return `${turn(g.turn)}
+          ${card('Tema', g.topic, 'pink', 'Tres cosas. Dos ciertas, una inventada. Numéralas al contarlas.')}
+          <div class="stackbtns"><button class="btn hot" data-act="countdown">Ya lo he contado, a votar</button><button class="btn alt" data-act="l-topic">Otro tema</button></div>`;
+        }
+        if (g.cd > 0) return `${turn(g.turn)}${countView(g.cd)}`;
+        return `${turn(g.turn)}${countView(0, '¡1, 2 o 3 dedos!')}
+        <p class="sub center"><b>${name(g.turn)}</b>, ¿cuál era la mentira? Quien falle, ${pen(1)}.</p>
+        <button class="btn" data-act="l-next">Siguiente</button>`;
+      }
+    },
+    {
+      id: 'mayor', title: 'Mayor o menor', color: 'mustard', min: 2, time: '10–25 min',
+      short: 'Adivina la siguiente carta.',
+      blurb: 'Una baraja de verdad, sin repetir cartas. Acierta tres seguidas y pasas.',
+      rules: () => [
+        'Mira la carta y apuesta: la siguiente, ¿mayor o menor? El As vale 1.',
+        `Si fallas (o es igual), ${pen(2)} y pasa el turno.`,
+        `Si aciertas tres seguidas, repartes ${pen(3)} y pasas el turno.`
+      ],
+      start() { const deck = newDeck(); S.g = { deck, cur: deck.pop(), prev: null, streak: 0, turn: 0, msg: '', tone: '' }; },
+      view() {
+        const g = S.g;
+        return `${turn(g.turn)}
+        <div class="table">${g.prev ? face(g.prev, 'small') : ''}${face(g.cur, 'enter')}</div>
+        <p class="msg ${g.tone}">${g.msg}</p>
+        <div class="stats"><span class="eyebrow">Racha ${g.streak}/3</span><span class="eyebrow dim">Quedan ${g.deck.length}</span></div>
+        <div class="duo"><button class="btn alt" data-act="h-guess" data-arg="low">Menor</button><button class="btn hot" data-act="h-guess" data-arg="high">Mayor</button></div>`;
+      }
+    },
+    {
+      id: 'copa', title: 'La copa del rey', color: 'lilac', min: 3, time: '25–45 min',
+      short: 'Cada carta, una norma. Cuidado con los reyes.',
+      blurb: 'Cada carta tiene su norma. Y el cuarto rey se lleva la copa.',
+      rules: () => [
+        S.sober ? 'Poned un vaso vacío en el centro: es el bote.' : 'Poned un vaso vacío en el centro de la mesa.',
+        'Por turnos, cada uno saca una carta y se cumple su norma.',
+        S.sober ? 'Cada rey suma algo al bote. Quien saque el cuarto rey, lo cumple.' : 'Cada rey echa un poco de su bebida en la copa. Quien saque el cuarto, se la bebe.'
+      ],
+      start() { S.g = { deck: newDeck(), cur: null, kings: 0, turn: 0, over: false }; },
+      view() {
+        const g = S.g;
+        if (g.over) {
+          return `<div class="verdict" style="--c:var(--lilac)"><span class="eyebrow">Cuarto rey para</span><h2>${name(g.turn)}</h2><p>${S.sober ? 'Le toca cumplir lo que diga el bote.' : 'Toda la copa del centro.'}</p></div>
+          <div class="stackbtns"><button class="btn hot" data-act="restart">Nueva partida</button></div>`;
+        }
+        const top = `${turn(g.turn)}<div class="stats"><span class="eyebrow">Reyes ${g.kings}/4</span><span class="eyebrow dim">Quedan ${g.deck.length}</span></div>`;
+        if (!g.cur) return `${top}<div class="table"><button class="pcard back" data-act="c-draw"><span>Toca para sacar</span></button></div>`;
+        const r = KINGS_RULES[g.cur.v]();
+        return `${top}<div class="table">${face(g.cur, 'enter')}</div>
+        <div class="rule"><b>${r.t}</b><p>${r.d}</p></div>
+        <button class="btn" data-act="c-next">Siguiente jugador</button>`;
+      }
+    },
+    {
+      id: 'esto', title: 'Esto o aquello', color: 'sky', min: 3, isNew: true, time: '10–20 min',
+      short: 'Dos opciones. La minoría pierde.',
+      blurb: 'Dos opciones y a la de tres todos eligen. Pierde quien piense distinto al resto.',
+      rules: () => [
+        'Leed las dos opciones.',
+        'Cuenta atrás. A la de tres, todos señalan a la izquierda o a la derecha.',
+        `Los que hayan quedado en minoría, ${pen(1)}. Si hay empate, todos.`
+      ],
+      start() { const b = bag(PAIRS); S.g = { b, cur: b(), cd: null }; },
+      view() {
+        const g = S.g;
+        const opts = `<div class="vs">
+          <div class="opt" style="--c:var(--sky)"><small>Izquierda</small><span>${g.cur[0]}</span></div>
+          <div class="opt" style="--c:var(--pink)"><small>Derecha</small><span>${g.cur[1]}</span></div>
+          <span class="vs-o">o</span></div>`;
+        if (g.cd === null) return `${opts}<div class="stackbtns"><button class="btn hot" data-act="countdown">Contar hasta tres</button><button class="btn alt" data-act="e-next">Otras dos</button></div>`;
+        if (g.cd > 0) return `${opts}${countView(g.cd)}`;
+        return `${opts}${countView(0, '¡Elegid!')}<p class="sub center">La minoría: ${pen(1)}. Empate: todos.</p><button class="btn" data-act="e-next">Siguiente</button>`;
+      }
+    },
+    {
+      id: 'reflejos', title: 'Reflejos', color: 'mint', min: 2, isNew: true, time: '5–10 min',
+      short: 'Toca cuando se ponga verde.',
+      blurb: 'Uno por uno, toca la pantalla en cuanto cambie de color. El más lento lo paga.',
+      rules: () => [
+        'Cada jugador, por turnos, toca para empezar y espera.',
+        'Cuando la pantalla se ponga verde, toca lo más rápido que puedas.',
+        'Si tocas antes de tiempo, quedas último.',
+        `El más lento, ${pen(2)}. El más rápido reparte ${pen(2)}.`
+      ],
+      start() { S.g = { i: 0, phase: 'ready', times: [], tGo: 0 }; },
+      view() {
+        const g = S.g, n = S.players.length;
+        if (g.phase === 'results') {
+          const rank = S.players.map((p, i) => ({ i, t: g.times[i] })).sort((a, b) => (a.t ?? Infinity) - (b.t ?? Infinity));
+          return `<div><h2 class="h2">Resultados</h2><p class="sub" style="margin-top:6px"><b>${name(rank[rank.length - 1].i)}</b> se lleva ${pen(2)}. <b>${name(rank[0].i)}</b> reparte ${pen(2)}.</p></div>
+          <ol class="ranking">${rank.map((r, k) => `<li><span class="pos">${String(k + 1).padStart(2, '0')}</span><span class="nm">${name(r.i)}</span><span class="ms">${r.t == null ? 'antes de tiempo' : r.t + ' ms'}</span></li>`).join('')}</ol>
+          <div class="stackbtns"><button class="btn hot" data-act="restart">Otra vez</button></div>`;
+        }
+        const nextLabel = g.i + 1 < n ? `Toca para pasar a ${name(g.i + 1)}` : 'Toca para ver resultados';
+        const inner = {
+          ready: `<span>${g.i + 1} de ${n}</span><b>${name(g.i)}</b><span>Toca para empezar. Luego espera al verde.</span>`,
+          wait: `<b>Espera…</b><span>No toques todavía</span>`,
+          go: `<b>¡YA!</b>`,
+          done: `<span>${name(g.i)}</span><b class="ms">${g.times[g.i]} ms</b><span>${nextLabel}</span>`,
+          early: `<b>Demasiado pronto</b><span>${name(g.i)} queda último. ${nextLabel}</span>`
+        }[g.phase];
+        return `<button class="rx ${g.phase}" data-tap="rx">${inner}</button>`;
+      }
+    },
+    {
+      id: 'ruleta', title: 'La ruleta', color: 'pink', min: 2, isNew: true, time: 'Lo que dure',
+      short: 'Le toca a alguien. Algo le toca.',
+      blurb: 'Gira, cae en alguien y le toca lo que diga la ruleta. Ideal entre juego y juego.',
+      rules: () => [
+        'Pulsa «Girar». La ruleta elige a una persona.',
+        'Le toca lo que salga: castigos, repartos, pequeños retos o librarse.',
+        'Se puede usar sola o entre partidas de otros juegos.'
+      ],
+      start() { S.g = { spinning: false, who: null, res: null }; },
+      view() {
+        const g = S.g;
+        return `<div class="spin ${g.res && !g.spinning ? 'done' : ''}"><span class="eyebrow">${g.spinning ? 'Girando' : g.who != null ? 'Le toca a' : 'La ruleta'}</span><b id="spin">${g.who != null ? name(g.who) : '¿?'}</b></div>
+        ${g.res && !g.spinning ? card('Le toca', g.res, 'pink') : ''}
+        <div class="stackbtns"><button class="btn hot" data-act="r-spin" ${g.spinning ? 'disabled' : ''}>${g.who == null ? 'Girar' : 'Girar otra vez'}</button></div>`;
+      }
+    },
+    {
+      id: 'mimica', title: 'Mímica', color: 'tomato', min: 4, isNew: true, time: '20–30 min',
+      short: 'Por equipos, sin hablar, contra el reloj.',
+      blurb: 'Dos equipos y sesenta segundos para hacer acertar todo lo que puedas sin abrir la boca.',
+      rules: () => [
+        'La app hace dos equipos alternando el orden del grupo.',
+        'Uno del equipo actúa sin hablar. Su equipo tiene 60 segundos para acertar todas las que pueda.',
+        'Si una es muy difícil, se puede pasar.',
+        `Cuando acabéis, el equipo que pierda: ${pen(2)} cada uno.`
+      ],
+      start() { S.g = { phase: 'ready', team: 0, scores: [0, 0], actor: [0, 0], left: 60, b: bag(MIMICA), word: null, got: 0 }; },
+      view() {
+        const g = S.g;
+        const team = t => S.players.map((p, i) => ({ p, i })).filter(x => x.i % 2 === t);
+        const actor = t => { const m = team(t); return m[g.actor[t] % m.length].i; };
+        const board = `<div class="score2">${[0, 1].map(t => `<div class="${g.team === t ? 'on' : ''}"><small class="eyebrow">Equipo ${'AB'[t]}</small><b>${g.scores[t]}</b><span>${team(t).map(x => esc(x.p.name)).join(', ')}</span></div>`).join('')}</div>`;
+        if (g.phase === 'ready') {
+          return `${board}<div class="verdict" style="--c:var(--tomato)"><span class="eyebrow">Equipo ${'AB'[g.team]} · Actúa</span><h2>${name(actor(g.team))}</h2><p>Solo tú miras la pantalla.</p></div>
+          <div class="stackbtns"><button class="btn hot" data-act="mi-go">Empezar · 60 s</button></div>`;
+        }
+        if (g.phase === 'play') {
+          return `<div class="clock sm" id="clock">${fmt(g.left)}</div>
+          ${card(`Aciertos: ${g.got}`, g.word, 'cream', '', 'xl')}
+          <div class="duo"><button class="btn alt" data-act="mi-word" data-arg="skip">Pasar</button><button class="btn hot" data-act="mi-word" data-arg="ok">Acertado</button></div>`;
+        }
+        return `<div class="verdict" style="--c:var(--mint)"><span class="eyebrow">Tiempo · Equipo ${'AB'[g.team]}</span><h2>${g.got}</h2><p>${g.got === 1 ? 'acierto' : 'aciertos'}</p></div>
+        ${board}<div class="stackbtns"><button class="btn" data-act="mi-swap">Turno del equipo ${'AB'[1 - g.team]}</button></div>`;
+      }
+    }
+  ];
+  const gameById = id => GAMES.find(g => g.id === id);
+
+  // ---------- views ----------
+  const VIEWS = {
+    gate: () => `<div class="gate">
+      <h1 class="wordmark">Previa<span>.</span></h1>
+      <p class="lede">Juegos para antes de salir, con preguntas picantes y castigos con bebida. Solo para mayores de 18.</p>
+      <button class="setting" data-act="toggle" data-arg="sober">
+        <span class="setting-text"><b>Jugar sin alcohol</b><small>Los tragos se cambian por puntos</small></span>
+        <span class="switch ${S.sober ? 'on' : ''}" role="switch" aria-checked="${S.sober}"></span>
+      </button>
+      <button class="btn hot" data-act="adult">Tengo 18 años o más</button>
+      <p class="fine center">Puedes cambiarlo cuando quieras en Ajustes.</p>
+    </div>`,
+
+    home: () => {
+      const n = S.players.length;
+      const av = S.players.slice(0, 4).map((p, i) => `<span class="av" style="--c:${colorOf(i)}">${esc(p.name[0].toUpperCase())}</span>`).join('') + (n > 4 ? `<span class="av more">+${n - 4}</span>` : '');
+      return `<header class="top">
+        <span class="eyebrow">${S.sober ? 'Sin alcohol' : 'Con moderación'}</span>
+        <button class="icon-btn" data-act="nav" data-arg="settings" aria-label="Ajustes">${ic.gear}</button>
+      </header>
+      <section class="hero">
+        <h1 class="wordmark">Previa<span>.</span></h1>
+        <p class="lede">${GAMES.length} juegos para antes de salir. Un móvil para todo el grupo.</p>
+      </section>
+      <button class="group" data-act="nav" data-arg="players">
+        ${n ? `<span class="avatars">${av}</span>` : ''}
+        <span class="group-text"><b>${n ? `${n} ${n === 1 ? 'jugador' : 'jugadores'}` : 'Añade a tu grupo'}</b><small>${n ? S.players.map(p => esc(p.name)).join(', ') : 'Los nombres se usan para repartir turnos'}</small></span>
+        ${ic.chev}
+      </button>
+      <div class="list-head"><span class="eyebrow">Juegos</span><span class="eyebrow dim">${String(GAMES.length).padStart(2, '0')}</span></div>
+      <ul class="games">${GAMES.map((g, i) => `<li><button class="game" data-act="open" data-arg="${g.id}">
+        <span class="tile" style="--c:var(--${g.color})">${String(i + 1).padStart(2, '0')}</span>
+        <span class="game-text"><span class="game-title">${g.title}${g.isNew ? '<em class="new">Nuevo</em>' : ''}</span><span class="game-blurb">${g.short}</span></span>
+        <span class="game-meta">${g.min}+</span>
+      </button></li>`).join('')}</ul>
+      <p class="foot">${S.sober ? 'Pásalo bien.' : 'Bebe con cabeza. Si conduces, hoy toca agua.'}</p>`;
+    },
+
+    players: () => `<header class="top"><button class="icon-btn" data-act="back" aria-label="Volver">${ic.back}</button><span class="top-title">Grupo</span><span class="spacer"></span></header>
+      <div><h2 class="h2">¿Quién juega?</h2><p class="sub" style="margin-top:6px">Se guardan solo en este móvil.</p></div>
+      <form class="add" data-submit="add"><input id="pname" name="n" maxlength="16" placeholder="Nombre" autocomplete="off" enterkeyhint="done" /><button class="btn hot sm" type="submit">Añadir</button></form>
+      ${S.players.length ? `<ul class="plist">${S.players.map((p, i) => `<li>
+        <span class="av" style="--c:${colorOf(i)}">${esc(p.name[0].toUpperCase())}</span>
+        <span class="pname">${esc(p.name)}</span>
+        <span class="counter"><button data-act="score" data-arg="${i}:-1" aria-label="Restar">−</button><b>${p.score || 0}</b><button data-act="score" data-arg="${i}:1" aria-label="Sumar">+</button></span>
+        <button class="x" data-act="del" data-arg="${i}" aria-label="Quitar">${ic.x}</button>
+      </li>`).join('')}</ul>
+      <div class="row-split"><span class="eyebrow">Marcador en ${unit()}</span><button class="link" data-act="reset-score">Poner a cero</button></div>`
+      : `<p class="empty">Todavía no hay nadie.<br>Mínimo dos para jugar.</p>`}
+      <div class="stackbtns"><button class="btn" data-act="back">Listo</button></div>`,
+
+    settings: () => `<header class="top"><button class="icon-btn" data-act="back" aria-label="Volver">${ic.back}</button><span class="top-title">Ajustes</span><span class="spacer"></span></header>
+      <div>
+        <button class="setting" data-act="toggle" data-arg="sober"><span class="setting-text"><b>Modo sin alcohol</b><small>Los castigos se cuentan en puntos, no en tragos</small></span><span class="switch ${S.sober ? 'on' : ''}"></span></button>
+        <button class="setting" data-act="toggle" data-arg="sound"><span class="setting-text"><b>Sonido y vibración</b><small>Efectos al pasar cartas y en las cuentas atrás</small></span><span class="switch ${sound.on ? 'on' : ''}"></span></button>
+        <button class="setting" data-act="wipe"><span class="setting-text"><b>Borrar datos</b><small>Quita el grupo, el marcador y las preferencias</small></span></button>
+      </div>
+      <p class="fine">Previa no recoge ni envía ningún dato. Todo se guarda en este dispositivo. <a class="link" href="privacidad.html">Política de privacidad</a></p>
+      <p class="fine">Contenido para mayores de 18. Bebe con moderación y nunca conduzcas si has bebido. Nadie está obligado a beber ni a cumplir un reto.</p>`,
+
+    intro: () => {
+      const g = gameById(S.game), i = GAMES.indexOf(g), n = S.players.length;
+      return `<header class="top"><button class="icon-btn" data-act="back" aria-label="Volver">${ic.back}</button><span class="spacer"></span></header>
+      <div class="intro-hero" style="--c:var(--${g.color})">
+        <span class="eyebrow">${String(i + 1).padStart(2, '0')} / ${String(GAMES.length).padStart(2, '0')}</span>
+        <h2>${g.title}</h2><p>${g.blurb}</p>
+        <div class="chips"><span>${g.min}+ jugadores</span><span>${g.time}</span></div>
+      </div>
+      <span class="eyebrow">Cómo se juega</span>
+      <ol class="rules">${g.rules().map(r => `<li>${r}</li>`).join('')}</ol>
+      <div class="stackbtns">${n >= g.min
+        ? `<button class="btn hot" data-act="start">Empezar</button>`
+        : `<p class="warn center">Hacen falta al menos ${g.min} jugadores. Ahora ${n === 1 ? 'hay 1' : `hay ${n}`}.</p><button class="btn" data-act="nav" data-arg="players">Añadir jugadores</button>`}</div>`;
+    },
+
+    play: () => {
+      const g = gameById(S.game);
+      return `<header class="top"><button class="icon-btn" data-act="back" aria-label="Salir del juego">${ic.back}</button><span class="top-title">${g.title}</span><button class="icon-btn" data-act="rules" aria-label="Reglas">${ic.help}</button></header>
+      ${g.view()}`;
+    }
+  };
+
+  function render() {
+    $app.innerHTML = VIEWS[S.view]() + (S.sheet ? `<div class="scrim" data-act="close-sheet"></div><div class="sheet" role="dialog">${S.sheet}</div>` : '');
+    if (S.focus) { const el = document.getElementById(S.focus); if (el) el.focus(); S.focus = null; }
+  }
+
+  // Android hardware back / browser back returns to the menu.
+  function go(view) {
+    clearClock();
+    S.sheet = null;
+    if (S.view === 'home' && view !== 'home') history.pushState({ app: 1 }, '');
+    S.view = view;
+    render();
+    window.scrollTo(0, 0);
+  }
+  function back() {
+    if (S.view === 'play') { go('intro'); return; }
+    if (history.state && history.state.app) history.back(); else go('home');
+  }
+  window.addEventListener('popstate', () => {
+    if (S.sheet) { S.sheet = null; history.pushState({ app: 1 }, ''); render(); return; }
+    clearClock(); S.view = 'home'; render();
+  });
+
+  // ---------- actions ----------
+  const G = () => gameById(S.game);
+  const A = {
+    adult() { store.set('adult', true); sound.win(); go('home'); },
+    nav(v) { sound.click(); go(v); },
+    back() { sound.click(); back(); },
+    toggle(k) {
+      if (k === 'sound') { sound.on = !sound.on; store.set('sound', sound.on); sound.click(); }
+      else { S.sober = !S.sober; store.set('sober', S.sober); sound.click(); }
+      render();
+    },
+    wipe() {
+      S.sheet = `<h3>¿Borrar todo?</h3><p class="sub">Se quitan el grupo, el marcador y los ajustes de este dispositivo.</p><div class="duo"><button class="btn alt" data-act="close-sheet">Cancelar</button><button class="btn hot" data-act="wipe-yes">Borrar</button></div>`;
+      render();
+    },
+    'wipe-yes'() {
+      S.sheet = null;
+      try { Object.keys(localStorage).filter(k => k.startsWith('previa:')).forEach(k => localStorage.removeItem(k)); } catch {}
+      S.players = []; S.sober = false; sound.on = true; S.view = 'gate'; render();
+    },
+    add(form) {
+      const v = form.n.value.trim();
+      if (!v) return;
+      S.players.push({ name: v, score: 0 }); savePlayers(); sound.click();
+      S.focus = 'pname'; render();
+    },
+    del(i) { S.players.splice(+i, 1); savePlayers(); sound.click(); render(); },
+    score(arg) { const [i, d] = arg.split(':').map(Number); addPen(i, d); sound.click(); render(); },
+    'reset-score'() { S.players.forEach(p => p.score = 0); savePlayers(); sound.click(); render(); },
+    open(id) { sound.click(); S.game = id; go('intro'); },
+    start() { sound.win(); lastCard = null; G().start(); go('play'); },
+    restart() { clearClock(); sound.flip(); G().start(); render(); window.scrollTo(0, 0); },
+    rules() { S.sheet = `<h3>${G().title}</h3><ol class="rules">${G().rules().map(r => `<li>${r}</li>`).join('')}</ol><button class="btn" data-act="close-sheet">Seguir jugando</button>`; render(); },
+    'close-sheet'() { S.sheet = null; render(); },
+    countdown() { countdown(); },
+
+    // misión
+    'm-show'() { sound.flip(); S.g.shown = true; render(); },
+    'm-next'() {
+      const g = S.g; sound.click(); g.shown = false;
+      if (g.i + 1 < S.players.length) { g.i++; render(); return; }
+      g.phase = 'play'; sound.win(); render();
+      every(1000, () => {
+        g.left--;
+        if (g.left <= 0) { clearClock(); sound.boom(); g.phase = 'reveal'; render(); return; }
+        if (g.left <= 10) sound.tick();
+        const c = document.getElementById('clock'); if (c) c.textContent = fmt(g.left);
+      });
+    },
+    'm-topic'() { sound.flip(); S.g.topic = S.g.tb(); render(); },
+    'm-peek'(i) {
+      const m = S.g.m[+i];
+      S.sheet = `<span class="eyebrow">Misión de ${name(+i)}</span><p class="sheet-what">${esc(m.what)}</p><p class="sheet-when">${esc(m.when[0].toUpperCase() + m.when.slice(1))}</p><button class="btn" data-act="close-sheet">Ocultar</button>`;
+      render();
+    },
+    'm-end'() { clearClock(); sound.boom(); S.g.phase = 'reveal'; render(); },
+    'm-mark'(arg) {
+      const [i, st] = arg.split(':'); const g = S.g;
+      const prev = g.marks[i];
+      g.marks[i] = prev === st ? null : st;
+      if (prev === 'caught') addPen(+i, -2);
+      if (g.marks[i] === 'caught') addPen(+i, 2);
+      sound.click(); render();
+    },
+
+    // verdad o reto
+    'v-pick'(k) { sound.flip(); S.g.kind = k; S.g.card = k === 't' ? S.g.tb() : S.g.db(); render(); },
+    'v-done'(r) {
+      const g = S.g;
+      if (r === 'no') { addPen(g.turn, g.card.n); sound.boom(); } else sound.win();
+      g.turn++; g.card = null; render();
+    },
+
+    // yo nunca
+    'n-next'() { sound.flip(); S.g.cur = S.g.b(); S.g.n++; render(); },
+
+    // probable / esto
+    'p-next'() { clearClock(); sound.flip(); S.g.cur = S.g.b(); S.g.cd = null; render(); },
+    'e-next'() { clearClock(); sound.flip(); S.g.cur = S.g.b(); S.g.cd = null; render(); },
+
+    // mentira
+    'l-topic'() { sound.flip(); S.g.topic = S.g.b(); render(); },
+    'l-next'() { sound.flip(); S.g.turn++; S.g.topic = S.g.b(); S.g.cd = null; render(); },
+
+    // bomba
+    'b-cat'() { sound.flip(); S.g.cat = S.g.b(); render(); },
+    'b-light'() {
+      const g = S.g;
+      g.state = 'running'; render();
+      const total = 15000 + Math.random() * 25000, t0 = performance.now();
+      const loop = () => {
+        const el = performance.now() - t0;
+        if (el >= total) { g.state = 'boom'; addPen(g.holder, 3); sound.boom(); render(); return; }
+        sound.tick(600 + 700 * el / total);
+        after(Math.max(130, 850 * (1 - el / total)), loop);
+      };
+      loop();
+    },
+    'b-pass'() {
+      const g = S.g; if (g.state !== 'running') return;
+      g.holder = mod(g.holder + 1); sound.click();
+      const el = document.getElementById('holder'); if (el) el.textContent = S.players[g.holder].name;
+    },
+    'b-again'() { sound.flip(); S.g.cat = S.g.b(); S.g.state = 'idle'; render(); },
+
+    // impostor
+    'i-show'() { sound.flip(); S.g.shown = true; render(); },
+    'i-next'() {
+      const g = S.g; sound.click(); g.shown = false;
+      if (g.i + 1 < S.players.length) g.i++; else g.phase = 'talk';
+      render();
+    },
+    'i-reveal'() { sound.boom(); S.g.phase = 'reveal'; render(); },
+
+    // mayor o menor
+    'h-guess'(dir) {
+      const g = S.g;
+      if (!g.deck.length) g.deck = newDeck();
+      const next = g.deck.pop();
+      const ok = dir === 'high' ? next.v > g.cur.v : next.v < g.cur.v;
+      const who = name(g.turn);
+      if (!ok) {
+        addPen(g.turn, 2); sound.boom();
+        g.msg = `${next.v === g.cur.v ? 'Igual. ' : 'Fallo. '}${pen(2)} para ${who}.`; g.tone = 'bad';
+        g.streak = 0; g.turn++;
+      } else if (++g.streak === 3) {
+        sound.win(); g.msg = `Tres seguidas. ${who} reparte ${pen(3)}.`; g.tone = 'good';
+        g.streak = 0; g.turn++;
+      } else { sound.flip(); g.msg = 'Bien. Otra.'; g.tone = 'good'; }
+      g.prev = g.cur; g.cur = next; render();
+    },
+
+    // copa del rey
+    'c-draw'() {
+      const g = S.g;
+      if (!g.deck.length) g.deck = newDeck();
+      g.cur = g.deck.pop(); sound.flip();
+      if (g.cur.v === 13 && ++g.kings === 4) { sound.boom(); g.over = true; }
+      render();
+    },
+    'c-next'() { sound.click(); S.g.cur = null; S.g.turn++; render(); },
+
+    // reflejos
+    rx() {
+      const g = S.g, n = S.players.length;
+      if (g.phase === 'ready') {
+        g.phase = 'wait'; render();
+        after(1200 + Math.random() * 3000, () => { g.phase = 'go'; g.tGo = performance.now(); sound.tick(1200); render(); });
+      } else if (g.phase === 'wait') {
+        clearClock(); g.times[g.i] = null; g.phase = 'early'; sound.boom(); render();
+      } else if (g.phase === 'go') {
+        g.times[g.i] = Math.round(performance.now() - g.tGo); g.phase = 'done'; sound.click(); render();
+      } else {
+        g.i++;
+        if (g.i < n) { g.phase = 'ready'; render(); return; }
+        const rank = S.players.map((p, i) => ({ i, t: g.times[i] })).sort((a, b) => (a.t ?? Infinity) - (b.t ?? Infinity));
+        addPen(rank[rank.length - 1].i, 2);
+        g.phase = 'results'; sound.win(); render();
+      }
+    },
+
+    // ruleta
+    'r-spin'() {
+      const g = S.g, n = S.players.length;
+      g.spinning = true; g.res = null; render();
+      let idx = rand(n), steps = 16 + rand(n * 2), d = 55;
+      const el = () => document.getElementById('spin');
+      const step = () => {
+        idx = (idx + 1) % n;
+        const e = el(); if (e) e.textContent = S.players[idx].name;
+        sound.tick(900);
+        if (--steps > 0) { d *= 1.12; after(d, step); return; }
+        const r = pick(ROULETTE);
+        g.who = idx; g.res = r.t(); g.spinning = false;
+        if (r.self) addPen(idx, r.self);
+        sound.win(); render();
+      };
+      after(d, step);
+    },
+
+    // mímica
+    'mi-go'() {
+      const g = S.g;
+      g.phase = 'play'; g.left = 60; g.got = 0; g.word = g.b(); sound.win(); render();
+      every(1000, () => {
+        g.left--;
+        if (g.left <= 0) { clearClock(); g.scores[g.team] += g.got; g.phase = 'end'; sound.boom(); render(); return; }
+        if (g.left <= 5) sound.tick();
+        const c = document.getElementById('clock'); if (c) c.textContent = fmt(g.left);
+      });
+    },
+    'mi-word'(r) {
+      const g = S.g;
+      if (r === 'ok') { g.got++; sound.win(); } else sound.click();
+      g.word = g.b(); render();
+    },
+    'mi-swap'() { const g = S.g; g.actor[g.team]++; g.team = 1 - g.team; g.phase = 'ready'; sound.click(); render(); }
+  };
+
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-act]');
+    if (!el || !A[el.dataset.act]) return;
+    e.preventDefault();
+    A[el.dataset.act](el.dataset.arg, el);
+  });
+  // Reaction-sensitive buttons fire on touch-down rather than click.
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest('[data-tap]');
+    if (!el || !A[el.dataset.tap]) return;
+    e.preventDefault();
+    A[el.dataset.tap](el.dataset.arg, el);
+  });
+  document.addEventListener('submit', e => {
+    e.preventDefault();
+    const f = e.target;
+    if (A[f.dataset.submit]) A[f.dataset.submit](f);
+  });
+
+  render();
+  </script>
+</body>
+</html>

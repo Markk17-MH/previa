@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0C" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>PREVIA VIP | La App Definitiva para Salir de Fiesta</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            neonPurple: '#8A2BE2',
+            neonCyan: '#00E5FF',
+            vipDark: '#0A0A0C',
+            vipCard: '#121218'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18, ReactDOM & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍸</text></svg>" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: #0A0A0C;
+      color: #f1f5f9;
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      overflow-x: hidden;
+    }
+    .glass-panel {
+      background: rgba(18, 18, 24, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: linear-gradient(135deg, rgba(26, 26, 36, 0.8) 0%, rgba(14, 14, 20, 0.85) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 20px -5px rgba(138, 43, 226, 0.2);
+    }
+    .glass-card-interactive {
+      background: linear-gradient(135deg, rgba(28, 28, 38, 0.88) 0%, rgba(16, 16, 24, 0.92) 100%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 25px -5px rgba(0, 229, 255, 0.15);
+    }
+    .glow-purple {
+      box-shadow: 0 0 25px rgba(138, 43, 226, 0.55), 0 0 50px rgba(138, 43, 226, 0.25);
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-[#0A0A0C] text-slate-100 antialiased selection:bg-[#8A2BE2] selection:text-white">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- Web Audio Synthesizer (Zero dependencies) ---
+    class SoundManager {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      initCtx() {
+        if (!this.ctx && typeof window !== 'undefined') {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      triggerHaptic(ms = 35) {
+        if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+          try { navigator.vibrate(ms); } catch {}
+        }
+      }
+      playClick() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.05);
+          gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.05);
+          this.triggerHaptic(15);
+        } catch {}
+      }
+      playCardFlip() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(450, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(950, this.ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.08);
+          this.triggerHaptic(20);
+        } catch {}
+      }
+      playTick(pitch = 750) {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(pitch, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.04);
+          this.triggerHaptic(25);
+        } catch {}
+      }
+      playExplosion() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.6);
+          gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.7);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.7);
+          this.triggerHaptic(400);
+        } catch {}
+      }
+      playSuccess() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        try {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + i * 0.08);
+            gain.gain.setValueAtTime(0.15, this.ctx.currentTime + i * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.08 + 0.2);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(this.ctx.currentTime + i * 0.08);
+            osc.stop(this.ctx.currentTime + i * 0.08 + 0.22);
+          });
+          this.triggerHaptic(50);
+        } catch {}
+      }
+    }
+    const sound = new SoundManager();
+
+    // --- Games Catalog & Rich Content ---
+    const GAMES_CATALOG = [
+      {
+        id: 'what-when-who',
+        title: 'Qué, Cuándo y Quién',
+        subtitle: 'Misiones secretas y 10 min de salseo',
+        badge: 'SALSEO & ACCIÓN',
+        description: 'Recibe una acción graciosa y un detonante habitual. Tienes 10 minutos para cumplirla en plena charla sin que te descubran.',
+        gradient: 'from-fuchsia-500 via-purple-600 to-cyan-500',
+        minPlayers: 3,
+        duration: '10-15 min',
+        icon: '✨'
+      },
+      {
+        id: 'truth-or-dare',
+        title: 'Verdad o Reto',
+        subtitle: 'El clásico picante sin censura',
+        badge: 'PICANTE +18',
+        description: 'Preguntas comprometidas para sacar secretos a la luz o retos atrevidos que romperán el hielo de golpe.',
+        gradient: 'from-rose-600 to-fuchsia-600',
+        minPlayers: 2,
+        duration: '20-40 min',
+        icon: '🔥'
+      },
+      {
+        id: 'never-have-i-ever',
+        title: 'Yo Nunca',
+        subtitle: 'Quien lo haya hecho, que beba',
+        badge: 'IMPRESCINDIBLE',
+        description: 'Descubre quién es un santo y quién tiene más pecados que confesar en la fiesta.',
+        gradient: 'from-cyan-500 to-blue-600',
+        minPlayers: 2,
+        duration: '15-30 min',
+        icon: '🍸'
+      },
+      {
+        id: 'most-likely-to',
+        title: '¿Quién es más probable?',
+        subtitle: 'A la de 3... ¡todos señalan!',
+        badge: 'RONDAS RÁPIDAS',
+        description: 'Descubre qué piensa realmente el grupo de ti. Situaciones límite donde nadie se salva.',
+        gradient: 'from-violet-600 to-indigo-600',
+        minPlayers: 3,
+        duration: '15-25 min',
+        icon: '👉'
+      },
+      {
+        id: 'the-bomb',
+        title: 'La Bomba',
+        subtitle: 'Pasa el móvil antes de que explote',
+        badge: 'ADRENALINA',
+        description: 'Di una palabra de la categoría y pasa el móvil rápido. El temporizador es secreto.',
+        gradient: 'from-amber-500 to-red-600',
+        minPlayers: 2,
+        duration: '10-20 min',
+        icon: '💣'
+      },
+      {
+        id: 'two-truths-one-lie',
+        title: 'Dos Verdades y Una Mentira',
+        subtitle: 'El arte del engaño y el salseo',
+        badge: 'PSICOLÓGICO',
+        description: 'Cuenta 3 anécdotas sobre ti: dos reales y una falsa. ¿Podrá el grupo descubrir la mentira?',
+        gradient: 'from-emerald-500 to-teal-600',
+        minPlayers: 3,
+        duration: '20-35 min',
+        icon: '🎭'
+      },
+      {
+        id: 'the-impostor',
+        title: 'El Impostor (Espía)',
+        subtitle: 'Uno de vosotros no sabe la palabra',
+        badge: 'PARTY FAVORITE',
+        description: 'Pasad el móvil en secreto. Todos ven la palabra salvo uno. ¡Pillad al impostor en el debate!',
+        gradient: 'from-purple-600 to-pink-600',
+        minPlayers: 3,
+        duration: '15-30 min',
+        icon: '🕵️'
+      },
+      {
+        id: 'higher-lower',
+        title: 'Mayor o Menor',
+        subtitle: 'El casino fiestero de cartas',
+        badge: 'CARTAS',
+        description: 'Apuesta si la siguiente carta será superior o inferior. Racha de aciertos acumulada.',
+        gradient: 'from-amber-400 to-orange-600',
+        minPlayers: 2,
+        duration: '10-25 min',
+        icon: '🃏'
+      },
+      {
+        id: 'ring-of-fire',
+        title: 'Ring of Fire (Copa del Rey)',
+        subtitle: 'La legendaria Copa del Rey',
+        badge: 'LEYENDA PREVIA',
+        description: '52 cartas alrededor del vaso sagrado. ¡Quien saque el 4º Rey se bebe la copa!',
+        gradient: 'from-rose-500 to-purple-800',
+        minPlayers: 3,
+        duration: '25-45 min',
+        icon: '👑'
+      }
+    ];
+
+    const WHAT_ACTIONS = [
+      "Hacer 5 flexiones en el suelo mirando fijamente a {target}",
+      "Darle un beso en la mejilla a {target} y susurrarle 'gracias por estar aquí'",
+      "Sentarte en el regazo de {target} durante 10 segundos fingiendo que no hay sitio",
+      "Robarle un sorbo de su copa a {target} sin pedirle permiso",
+      "Decir en voz alta 'eso es exactamente lo que dijo ella anoche' con cara pícara",
+      "Quitarte una prenda (chaqueta, calcetín, pulsera) y ponérsela a {target}",
+      "Cantarle el estribillo de una canción de reggaetón romántico al oído a {target}",
+      "Chocar los cinco con {target} pero dejar los dedos entrelazados de forma seductora",
+      "Hacer un brindis apasionado dedicado con devoción a los ojos de {target}",
+      "Girar la cabeza despacio y mirar a {target} con cara de detective sospechoso",
+      "Fingir que te atragantas con la copa y pedirle a {target} que te frote la espalda",
+      "Decirle un piropo picante y descarado a {target} manteniendo contacto visual sin reírte"
+    ];
+
+    const WHEN_TRIGGERS = [
+      "Cuando {target} dé un trago a su copa o cerveza",
+      "Cuando {target} mire la pantalla de su teléfono móvil",
+      "Cuando {target} se ría a carcajadas de cualquier cosa",
+      "Cuando alguien de la mesa diga la palabra 'fiesta', 'salir' o 'discoteca'",
+      "Cuando {target} se toque el pelo o la cara con la mano",
+      "Cuando alguien mencione a su ex o a un lío del pasado",
+      "Cuando haya una pausa de silencio de más de 3 segundos en la conversación",
+      "Cuando {target} cruce las piernas o se acomode en el asiento",
+      "Cuando alguien proponga hacer un brindis o pedir comida rápida"
+    ];
+
+    const CONVERSATION_TOPICS = [
+      "¿Cuál ha sido la mentira más sucia o desesperada que has dicho para ligar o gustarle a alguien?",
+      "Si tuvieras que hacer un trío obligatorio con dos personas presentes en esta habitación, ¿a quiénes elegirías?",
+      "¿Qué es lo más vergonzoso que alguien ha encontrado en tu habitación o en tu móvil?",
+      "¿Has tenido alguna vez una fantasía íntima con la pareja o el 'crush' de un amigo/a?",
+      "¿Qué es lo peor que has hecho de fiesta de lo que todavía sientes vergüenza ajena al recordarlo?",
+      "¿Cuál es tu 'red flag' personal más tóxica que intentas ocultar en las primeras citas?",
+      "Si supieras que nadie en el mundo se va a enterar jamás, ¿a quién de esta mesa le darías un beso con lengua ahora mismo?",
+      "¿Cuál ha sido la noche de fiesta más descontrolada y surrealista de toda tu vida?"
+    ];
+
+    const TRUTHS = [
+      { text: "¿Cuál es la mentira más grande que le has dicho a tus padres para salir de fiesta?", drinks: 2 },
+      { text: "¿Has besado alguna vez a más de dos personas en la misma noche? Cuéntalo.", drinks: 3 },
+      { text: "¿Quién de las personas en esta habitación te parece la más atractiva físicamente?", drinks: 3 },
+      { text: "¿Alguna vez has revisado el móvil de tu pareja o tu ex a escondidas?", drinks: 2 },
+      { text: "¿Tienes algún fetiche o fantasía inconfesable que nunca hayas dicho en voz alta?", drinks: 4 },
+      { text: "¿Te liarías con el/la ex de algún amigo de este grupo si supieras que nadie se enteraría?", drinks: 3 },
+      { text: "¿Has tenido sueños eróticos con alguien que esté aquí presente?", drinks: 4 }
+    ];
+
+    const DARES = [
+      { text: "Llama a tu ex o a tu 'crush' y ponle en altavoz diciendo solo 'Te echo de menos' o bebe 3 tragos.", drinks: 3 },
+      { text: "Baila como gogó de discoteca encima de una silla durante 30 segundos sin música.", drinks: 2 },
+      { text: "Muestra la última foto de tu galería de fotos al grupo durante 10 segundos enteros.", drinks: 3 },
+      { text: "Toma un chupito directo del vaso de la persona a tu izquierda con las manos en la espalda.", drinks: 2 },
+      { text: "Dale tu teléfono a la persona de tu derecha para que publique lo que quiera en tus historias 5 min.", drinks: 4 },
+      { text: "Haz un masaje en los hombros a la persona frente a ti mientras mantienes contacto visual incómodo.", drinks: 2 }
+    ];
+
+    const NEVER_HAVE_I_EVER = [
+      "Yo nunca he revisado los mensajes del móvil de mi pareja a escondidas.",
+      "Yo nunca me he liado con el/la ex de un amigo/a.",
+      "Yo nunca he vomitado en un taxi, Uber o transporte público tras una fiesta.",
+      "Yo nunca he mandado un WhatsApp a las 4 AM del que me he arrepentido al despertar.",
+      "Yo nunca he estado con alguien en los baños de una discoteca.",
+      "Yo nunca he tenido una fantasía íntima con alguien de este grupo.",
+      "Yo nunca me he despertado sin saber cómo llegué a mi casa o a mi cama."
+    ];
+
+    const MOST_LIKELY = [
+      "¿Quién es más probable que termine preso o multado esta noche?",
+      "¿Quién es más probable que se enamore de la persona que le sirva la copa en la barra?",
+      "¿Quién es más probable que pierda el móvil o las llaves antes de las 4 AM?",
+      "¿Quién es más probable que acabe liándose con su ex antes de que termine el mes?",
+      "¿Quién es más probable que se gaste más de 100€ en copas impulsivamente?",
+      "¿Quién es más probable que llore en el taxi de vuelta escuchando reggaetón triste?"
+    ];
+
+    const BOMB_CATS = [
+      "Marcas de bebidas alcohólicas o licores",
+      "Lugares raros para darse un beso",
+      "Excusas típicas para no contestar a un mensaje",
+      "Canciones míticas de Reggaetón clásico",
+      "Nombres de DJs famosos o artistas de fiesta",
+      "Cosas que encuentras en el suelo de una discoteca al cerrar",
+      "Mentiras que dices en la primera cita"
+    ];
+
+    // Helper to generate deck
+    function getShuffledDeck() {
+      const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+      const labels = { 1:'A', 2:'2', 3:'3', 4:'4', 5:'5', 6:'6', 7:'7', 8:'8', 9:'9', 10:'10', 11:'J', 12:'Q', 13:'K' };
+      const deck = [];
+      for (const s of suits) {
+        for (let v = 1; v <= 13; v++) {
+          deck.push({ suit: s, value: v, label: labels[v] });
+        }
+      }
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      return deck;
+    }
+
+    // --- Main App Component ---
+    function App() {
+      const [view, setView] = useState('home'); // 'home' | 'players' | 'game' | 'online'
+      const [activeGameId, setActiveGameId] = useState(null);
+      const [soundOn, setSoundOn] = useState(true);
+      const [players, setPlayers] = useState([
+        { id: '1', name: 'Carlos', drinks: 0 },
+        { id: '2', name: 'Lucía', drinks: 0 },
+        { id: '3', name: 'Mateo', drinks: 0 },
+        { id: '4', name: 'Sofía', drinks: 0 }
+      ]);
+      const [newPlayerName, setNewPlayerName] = useState('');
+      const [onlineRoomCode, setOnlineRoomCode] = useState(null);
+      const [joinCodeInput, setJoinCodeInput] = useState('');
+
+      // Game States
+      // 1. What When Who
+      const [wwwPhase, setWwwPhase] = useState('assign');
+      const [wwwPassIdx, setWwwPassIdx] = useState(0);
+      const [wwwShowSecret, setWwwShowSecret] = useState(false);
+      const [wwwMissions, setWwwMissions] = useState({});
+      const [wwwTimeLeft, setWwwTimeLeft] = useState(600);
+      const [wwwTopicIdx, setWwwTopicIdx] = useState(0);
+      const [wwwPeekOpen, setWwwPeekOpen] = useState(false);
+
+      // 2. Truth or Dare
+      const [todChoice, setTodChoice] = useState(null);
+      const [todText, setTodText] = useState('');
+      const [todDrinks, setTodDrinks] = useState(2);
+      const [todPlayerIdx, setTodPlayerIdx] = useState(0);
+
+      // 3. Yo Nunca
+      const [nhieIdx, setNhieIdx] = useState(0);
+
+      // 4. Most Likely To
+      const [mltIdx, setMltIdx] = useState(0);
+      const [mltCountdown, setMltCountdown] = useState(null);
+
+      // 5. La Bomba
+      const [bombState, setBombState] = useState('idle');
+      const [bombCatIdx, setBombCatIdx] = useState(0);
+      const [bombHolderIdx, setBombHolderIdx] = useState(0);
+      const [bombSecs, setBombSecs] = useState(25);
+
+      // 6. Mayor o Menor
+      const [hlDeck, setHlDeck] = useState(getShuffledDeck);
+      const [hlCurrentCard, setHlCurrentCard] = useState(hlDeck[0] || { suit:'hearts', value:7, label:'7' });
+      const [hlStreak, setHlStreak] = useState(0);
+      const [hlPlayerIdx, setHlPlayerIdx] = useState(0);
+
+      // 7. Ring of Fire
+      const [rofDeck, setRofDeck] = useState(getShuffledDeck);
+      const [rofCurrentCard, setRofCurrentCard] = useState(null);
+      const [rofKings, setRofKings] = useState(0);
+      const [rofPlayerIdx, setRofPlayerIdx] = useState(0);
+
+      // --- 10 min Timer for What When Who ---
+      useEffect(() => {
+        if (view === 'game' && activeGameId === 'what-when-who' && wwwPhase === 'playing') {
+          if (wwwTimeLeft > 0) {
+            const timer = setInterval(() => setWwwTimeLeft(prev => prev - 1), 1000);
+            return () => clearInterval(timer);
+          } else {
+            sound.playExplosion();
+            setWwwPhase('reveal');
+          }
+        }
+      }, [view, activeGameId, wwwPhase, wwwTimeLeft]);
+
+      // --- Countdown for Most Likely To ---
+      useEffect(() => {
+        if (mltCountdown !== null) {
+          if (mltCountdown > 0) {
+            sound.playTick(600 + (3 - mltCountdown) * 200);
+            const t = setTimeout(() => setMltCountdown(mltCountdown - 1), 1000);
+            return () => clearTimeout(t);
+          } else if (mltCountdown === 0) {
+            sound.playExplosion();
+            const t = setTimeout(() => setMltCountdown(null), 2000);
+            return () => clearTimeout(t);
+          }
+        }
+      }, [mltCountdown]);
+
+      // --- La Bomba Timer ---
+      useEffect(() => {
+        if (bombState === 'running') {
+          if (bombSecs > 0) {
+            sound.playTick(700 + (30 - bombSecs) * 20);
+            const t = setTimeout(() => setBombSecs(prev => prev - 1), 1000);
+            return () => clearTimeout(t);
+          } else {
+            sound.playExplosion();
+            setBombState('exploded');
+          }
+        }
+      }, [bombState, bombSecs]);
+
+      const triggerConfetti = () => {
+        try {
+          if (window.confetti) {
+            window.confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+          }
+        } catch {}
+      };
+
+      const startWhatWhenWho = () => {
+        const missionsObj = {};
+        players.forEach((p, idx) => {
+          const others = players.filter(o => o.id !== p.id);
+          const target = others[Math.floor(Math.random() * others.length)] || players[(idx + 1) % players.length];
+          const rawWhat = WHAT_ACTIONS[Math.floor(Math.random() * WHAT_ACTIONS.length)];
+          const rawWhen = WHEN_TRIGGERS[Math.floor(Math.random() * WHEN_TRIGGERS.length)];
+          missionsObj[p.id] = {
+            targetName: target.name,
+            what: rawWhat.replace(/{target}/g, target.name),
+            when: rawWhen.replace(/{target}/g, target.name)
+          };
+        });
+        setWwwMissions(missionsObj);
+        setWwwPassIdx(0);
+        setWwwShowSecret(false);
+        setWwwTimeLeft(600);
+        setWwwPhase('assign');
+      };
+
+      const addPlayer = (e) => {
+        e.preventDefault();
+        if (newPlayerName.trim()) {
+          sound.playClick();
+          setPlayers([...players, { id: Date.now().toString(), name: newPlayerName.trim(), drinks: 0 }]);
+          setNewPlayerName('');
+        }
+      };
+
+      const removePlayer = (id) => {
+        sound.playClick();
+        setPlayers(players.filter(p => p.id !== id));
+      };
+
+      const updateDrinks = (id, delta) => {
+        sound.playClick();
+        setPlayers(players.map(p => p.id === id ? { ...p, drinks: Math.max(0, p.drinks + delta) } : p));
+      };
+
+      const launchGame = (gameId) => {
+        sound.playSuccess();
+        setActiveGameId(gameId);
+        if (gameId === 'what-when-who') {
+          startWhatWhenWho();
+        }
+        setView('game');
+      };
+
+      const formatTime = (secs) => {
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      };
+
+      return (
+        <div className="min-h-screen bg-[#0A0A0C] text-slate-100 flex flex-col justify-between selection:bg-[#8A2BE2] selection:text-white">
+          
+          {/* Header */}
+          <header className="sticky top-0 z-40 w-full px-4 py-3 bg-[#0A0A0C]/90 backdrop-blur-md border-b border-white/5">
+            <div className="max-w-md mx-auto flex items-center justify-between">
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => { sound.playClick(); setView('home'); }}>
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#8A2BE2] to-[#00E5FF] p-[1px]">
+                  <div className="w-full h-full bg-[#0E0E14] rounded-xl flex items-center justify-center font-black text-xs text-[#00E5FF]">
+                    🍸
+                  </div>
+                </div>
+                <span className="font-extrabold tracking-wider text-base">
+                  PREVIA<span className="text-[#00E5FF]">VIP</span>
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { sound.playClick(); setView('online'); }}
+                  className={`px-2.5 py-1 rounded-full border text-xs font-bold transition-all ${
+                    onlineRoomCode ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-white/5 border-white/10 text-slate-300'
+                  }`}
+                >
+                  📡 {onlineRoomCode ? onlineRoomCode : 'Online'}
+                </button>
+
+                <button
+                  onClick={() => {
+                    sound.enabled = !sound.enabled;
+                    setSoundOn(sound.enabled);
+                    if (sound.enabled) sound.playClick();
+                  }}
+                  className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs"
+                >
+                  {soundOn ? '🔊' : '🔇'}
+                </button>
+
+                <button
+                  onClick={() => { sound.playClick(); setView('players'); }}
+                  className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-slate-200"
+                >
+                  👥 {players.length}
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Container */}
+          <main className="flex-1 w-full max-w-md mx-auto p-4 flex flex-col justify-center">
+
+            {/* VIEW 1: HOME */}
+            {view === 'home' && (
+              <div className="space-y-5 text-center">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-bold text-[#00E5FF]">
+                  ✨ EDICIÓN VIP • 100% GRATIS • SIN REGISTRO
+                </div>
+
+                <h1 className="text-4xl font-black tracking-tight text-white uppercase leading-none">
+                  Eleva tu <span className="bg-gradient-to-r from-[#8A2BE2] via-[#d946ef] to-[#00E5FF] bg-clip-text text-transparent">Previa</span>
+                </h1>
+
+                <p className="text-xs text-slate-300 max-w-xs mx-auto">
+                  Juegos sin límites para beber, desatar secretos y misiones ocultas con amigos desde el móvil.
+                </p>
+
+                <button
+                  onClick={() => launchGame('what-when-who')}
+                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#8A2BE2] via-[#6366F1] to-[#00E5FF] text-white font-black text-base uppercase tracking-wider glow-purple active:scale-95 transition-all"
+                >
+                  ▶ Empezar a Jugar (Gratis)
+                </button>
+
+                {/* Games Grid */}
+                <div className="space-y-3 pt-2 text-left">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-400 block px-1">
+                    Catálogo de Juegos ({GAMES_CATALOG.length})
+                  </span>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    {GAMES_CATALOG.map((g) => (
+                      <div
+                        key={g.id}
+                        onClick={() => launchGame(g.id)}
+                        className="p-4 rounded-3xl glass-card border border-white/10 hover:border-[#00E5FF]/40 cursor-pointer active:scale-98 transition-all space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-white/5 text-[#00E5FF] border border-white/10">
+                            {g.badge}
+                          </span>
+                          <span className="text-[10px] text-slate-400">{g.duration}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{g.icon}</span>
+                          <div>
+                            <h3 className="text-base font-black text-white">{g.title}</h3>
+                            <p className="text-xs text-slate-400">{g.subtitle}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 2: PLAYERS */}
+            {view === 'players' && (
+              <div className="space-y-5 text-center">
+                <h2 className="text-2xl font-black text-white">Configuración del Grupo</h2>
+                <p className="text-xs text-slate-400">Añade los amigos de la previa para personalizar los turnos y misiones.</p>
+
+                <form onSubmit={addPlayer} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newPlayerName}
+                    onChange={(e) => setNewPlayerName(e.target.value)}
+                    placeholder="Nombre o apodo..."
+                    maxLength={18}
+                    className="flex-1 px-4 py-3 rounded-xl bg-[#121218] border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF]"
+                  />
+                  <button type="submit" className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#8A2BE2] to-[#00E5FF] font-bold text-xs uppercase">
+                    + Añadir
+                  </button>
+                </form>
+
+                <div className="space-y-2 max-h-72 overflow-y-auto no-scrollbar">
+                  {players.map((p) => (
+                    <div key={p.id} className="p-3 rounded-2xl glass-panel flex items-center justify-between text-xs">
+                      <span className="font-bold text-white text-sm">{p.name}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center bg-white/5 rounded-lg px-2 py-1 gap-2">
+                          <button onClick={() => updateDrinks(p.id, -1)} className="text-slate-400 hover:text-white">-</button>
+                          <span className="font-bold text-[#00E5FF]">{p.drinks} tragos</span>
+                          <button onClick={() => updateDrinks(p.id, 1)} className="text-slate-400 hover:text-white">+</button>
+                        </div>
+                        <button onClick={() => removePlayer(p.id)} className="text-rose-400 p-1">✕</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => { sound.playClick(); setView('home'); }}
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#00E5FF] font-black text-sm uppercase"
+                >
+                  Guardar y Volver
+                </button>
+              </div>
+            )}
+
+            {/* VIEW 3: ONLINE ROOMS */}
+            {view === 'online' && (
+              <div className="space-y-5 text-center">
+                <h2 className="text-2xl font-black text-white">Salas Online VIP</h2>
+                <p className="text-xs text-slate-400">Juega con tus amigos sincronizados desde diferentes móviles.</p>
+
+                {onlineRoomCode ? (
+                  <div className="p-6 rounded-3xl glass-card space-y-4">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">CÓDIGO DE TU SALA:</span>
+                    <span className="text-4xl font-black text-[#00E5FF] tracking-widest block font-mono">{onlineRoomCode}</span>
+                    <p className="text-xs text-slate-300">Dile a tus amigos que introduzcan este código en sus teléfonos.</p>
+                    <button
+                      onClick={() => { sound.playClick(); setOnlineRoomCode(null); }}
+                      className="w-full py-3 rounded-xl bg-rose-500/20 text-rose-300 text-xs font-bold"
+                    >
+                      Cerrar Sala
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <button
+                      onClick={() => {
+                        sound.playSuccess();
+                        const code = Math.random().toString(36).substring(2, 6).toUpperCase();
+                        setOnlineRoomCode(code);
+                      }}
+                      className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#00E5FF] font-black text-sm uppercase"
+                    >
+                      Crear Nueva Sala VIP
+                    </button>
+
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+                      <span className="text-xs font-bold text-slate-300 block">¿Ya tienes un código?</span>
+                      <input
+                        type="text"
+                        value={joinCodeInput}
+                        onChange={(e) => setJoinCodeInput(e.target.value.toUpperCase())}
+                        placeholder="CÓDIGO (Ej. 7K8P)"
+                        maxLength={6}
+                        className="w-full px-4 py-3 rounded-xl bg-[#121218] border border-white/10 text-center font-mono font-black text-[#00E5FF] tracking-widest text-lg"
+                      />
+                      <button
+                        onClick={() => {
+                          if (joinCodeInput.trim()) {
+                            sound.playSuccess();
+                            setOnlineRoomCode(joinCodeInput.trim());
+                          }
+                        }}
+                        className="w-full py-3 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-[#00E5FF] font-bold text-xs uppercase"
+                      >
+                        Unirme a la Sala
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => { sound.playClick(); setView('home'); }}
+                  className="text-xs text-slate-400 hover:text-white underline"
+                >
+                  Volver al Menú
+                </button>
+              </div>
+            )}
+
+            {/* VIEW 4: ACTIVE GAMEPLAY */}
+            {view === 'game' && (
+              <div className="space-y-4">
+                <button
+                  onClick={() => { sound.playClick(); setView('home'); }}
+                  className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
+                >
+                  ← Cambiar de Juego
+                </button>
+
+                {/* GAME: QUÉ, CUÁNDO Y QUIÉN */}
+                {activeGameId === 'what-when-who' && (
+                  <div className="space-y-4 text-center">
+                    {wwwPhase === 'assign' && (
+                      <div className="p-6 rounded-3xl glass-card-interactive space-y-5">
+                        <span className="text-[10px] font-bold uppercase text-[#00E5FF]">
+                          Misión Secreta #{wwwPassIdx + 1} de {players.length}
+                        </span>
+                        <h3 className="text-2xl font-black text-white">
+                          📱 Pásale el móvil a: <span className="text-[#00E5FF]">{players[wwwPassIdx]?.name}</span>
+                        </h3>
+
+                        {!wwwShowSecret ? (
+                          <button
+                            onClick={() => { sound.playCardFlip(); setWwwShowSecret(true); }}
+                            className="w-full py-5 rounded-2xl bg-white/5 border border-white/10 font-black text-sm uppercase"
+                          >
+                            👁 Toca para ver tu misión secreta
+                          </button>
+                        ) : (
+                          <div className="space-y-4 text-left">
+                            <div className="p-4 rounded-2xl bg-purple-950/60 border border-purple-500/30 space-y-3">
+                              <div>
+                                <span className="text-[10px] font-black uppercase text-[#00E5FF] block">🎯 QUÉ (Tu acción atrevida):</span>
+                                <p className="text-sm font-bold text-white">{wwwMissions[players[wwwPassIdx]?.id]?.what}</p>
+                              </div>
+                              <div className="pt-2 border-t border-white/10">
+                                <span className="text-[10px] font-black uppercase text-amber-400 block">⚡ CUÁNDO (Tu detonante en la charla):</span>
+                                <p className="text-xs font-semibold text-slate-200">{wwwMissions[players[wwwPassIdx]?.id]?.when}</p>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => {
+                                sound.playClick();
+                                setWwwShowSecret(false);
+                                if (wwwPassIdx + 1 < players.length) {
+                                  setWwwPassIdx(wwwPassIdx + 1);
+                                } else {
+                                  triggerConfetti();
+                                  setWwwPhase('playing');
+                                }
+                              }}
+                              className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#00E5FF] font-black text-xs uppercase"
+                            >
+                              Ocultar y Pasar Teléfono
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {wwwPhase === 'playing' && (
+                      <div className="p-6 rounded-3xl glass-card-interactive space-y-5">
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-white/5">
+                          <div className="text-left">
+                            <span className="text-[10px] text-slate-400 font-bold block">TIEMPO DE PREVIA:</span>
+                            <span className="text-2xl font-mono font-black text-white">{formatTime(wwwTimeLeft)}</span>
+                          </div>
+                          <button
+                            onClick={() => setWwwPeekOpen(!wwwPeekOpen)}
+                            className="px-3 py-1.5 rounded-xl bg-[#00E5FF]/20 text-[#00E5FF] text-xs font-bold"
+                          >
+                            {wwwPeekOpen ? 'Ocultar' : 'Recordar Mi Misión'}
+                          </button>
+                        </div>
+
+                        {wwwPeekOpen && (
+                          <div className="p-3 rounded-2xl bg-black/80 border border-purple-500/40 text-left text-xs space-y-1">
+                            <p className="text-white font-bold">🎯 {wwwMissions[players[0]?.id]?.what}</p>
+                            <p className="text-amber-400">⚡ {wwwMissions[players[0]?.id]?.when}</p>
+                          </div>
+                        )}
+
+                        <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-left space-y-2">
+                          <span className="text-xs font-bold text-[#00E5FF] block">🔥 Pregunta de Conversación Picante:</span>
+                          <p className="text-base font-bold text-white">"{CONVERSATION_TOPICS[wwwTopicIdx % CONVERSATION_TOPICS.length]}"</p>
+                          <button
+                            onClick={() => { sound.playCardFlip(); setWwwTopicIdx(prev => prev + 1); }}
+                            className="text-[11px] text-slate-400 hover:text-white underline"
+                          >
+                            🎲 Otra Pregunta
+                          </button>
+                        </div>
+
+                        <p className="text-xs text-slate-400">Mantened la charla normal. Ejecuta tu acción cuando suceda tu detonante.</p>
+
+                        <button
+                          onClick={() => { sound.playClick(); setWwwPhase('reveal'); }}
+                          className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold uppercase"
+                        >
+                          ¡Revelar Misiones Ahora!
+                        </button>
+                      </div>
+                    )}
+
+                    {wwwPhase === 'reveal' && (
+                      <div className="p-6 rounded-3xl glass-card space-y-4">
+                        <h3 className="text-2xl font-black text-white">¿Quién cumplió su misión?</h3>
+                        <p className="text-xs text-slate-400">Leed vuestro Qué y Cuándo. Cumplida = Regalas 3 tragos. Pillado = Bebes 2.</p>
+                        <div className="space-y-2 max-h-60 overflow-y-auto text-left text-xs no-scrollbar">
+                          {players.map((p) => (
+                            <div key={p.id} className="p-3 rounded-xl bg-white/5 space-y-1">
+                              <span className="font-bold text-[#00E5FF] block">{p.name}:</span>
+                              <p className="text-slate-200">🎯 {wwwMissions[p.id]?.what}</p>
+                              <p className="text-amber-400">⚡ {wwwMissions[p.id]?.when}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => startWhatWhenWho()}
+                          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#00E5FF] font-black text-xs uppercase"
+                        >
+                          Nueva Ronda de 10 Minutos
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* GAME: VERDAD O RETO */}
+                {activeGameId === 'truth-or-dare' && (
+                  <div className="p-6 rounded-3xl glass-card-interactive text-center space-y-5">
+                    <span className="text-xs font-bold text-slate-400">Turno de: <strong className="text-white text-base">{players[todPlayerIdx % players.length]?.name}</strong></span>
+                    {!todChoice ? (
+                      <div className="space-y-3">
+                        <h3 className="text-xl font-black text-white">¿Qué eliges?</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            onClick={() => {
+                              sound.playCardFlip();
+                              setTodChoice('VERDAD');
+                              const item = TRUTHS[Math.floor(Math.random() * TRUTHS.length)];
+                              setTodText(item.text);
+                              setTodDrinks(item.drinks);
+                            }}
+                            className="py-4 rounded-2xl bg-cyan-600 font-black text-sm uppercase"
+                          >
+                            🔍 Verdad
+                          </button>
+                          <button
+                            onClick={() => {
+                              sound.playCardFlip();
+                              setTodChoice('RETO');
+                              const item = DARES[Math.floor(Math.random() * DARES.length)];
+                              setTodText(item.text);
+                              setTodDrinks(item.drinks);
+                            }}
+                            className="py-4 rounded-2xl bg-rose-600 font-black text-sm uppercase"
+                          >
+                            🔥 Reto
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-white/10 text-amber-300">
+                          {todChoice} • {todDrinks} tragos si te niegas
+                        </span>
+                        <p className="text-lg font-bold text-white leading-relaxed">"{todText}"</p>
+                        <button
+                          onClick={() => {
+                            sound.playSuccess();
+                            triggerConfetti();
+                            setTodChoice(null);
+                            setTodPlayerIdx(prev => prev + 1);
+                          }}
+                          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#00E5FF] font-black text-xs uppercase"
+                        >
+                          ¡Cumplido! Siguiente Jugador
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* GAME: YO NUNCA */}
+                {activeGameId === 'never-have-i-ever' && (
+                  <div className="p-6 rounded-3xl glass-card-interactive text-center space-y-6">
+                    <span className="text-xs font-bold text-[#00E5FF]">🍸 Yo Nunca • Quien lo haya hecho, bebe</span>
+                    <p className="text-xl font-black text-white leading-relaxed">"{NEVER_HAVE_I_EVER[nhieIdx % NEVER_HAVE_I_EVER.length]}"</p>
+                    <button
+                      onClick={() => {
+                        sound.playCardFlip();
+                        setNhieIdx(prev => prev + 1);
+                      }}
+                      className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 font-black text-sm uppercase"
+                    >
+                      Siguiente Frase ➔
+                    </button>
+                  </div>
+                )}
+
+                {/* GAME: QUIÉN ES MÁS PROBABLE */}
+                {activeGameId === 'most-likely-to' && (
+                  <div className="p-6 rounded-3xl glass-card-interactive text-center space-y-6">
+                    <span className="text-xs font-bold text-purple-400">👉 ¿Quién es más probable?</span>
+                    <p className="text-2xl font-black text-white">"{MOST_LIKELY[mltIdx % MOST_LIKELY.length]}"</p>
+
+                    {mltCountdown !== null ? (
+                      <div className="py-4 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#00E5FF] text-white">
+                        {mltCountdown > 0 ? (
+                          <span className="text-5xl font-black">{mltCountdown}</span>
+                        ) : (
+                          <span className="text-2xl font-black block animate-bounce">👉 ¡SEÑALEN AHORA! 👈</span>
+                        )}
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setMltCountdown(3)}
+                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#6366F1] font-black text-sm uppercase"
+                      >
+                        ⏱ Cuenta Atrás (3.. 2.. 1..)
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => { sound.playCardFlip(); setMltIdx(prev => prev + 1); }}
+                      className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold uppercase"
+                    >
+                      Siguiente Pregunta
+                    </button>
+                  </div>
+                )}
+
+                {/* GAME: LA BOMBA */}
+                {activeGameId === 'the-bomb' && (
+                  <div className="p-6 rounded-3xl glass-card-interactive text-center space-y-6">
+                    <span className="text-xs font-bold text-amber-400">💣 La Bomba • Temporizador Oculto</span>
+
+                    {bombState === 'idle' && (
+                      <div className="space-y-4">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">Categoría:</span>
+                        <h3 className="text-xl font-black text-white">"{BOMB_CATS[bombCatIdx % BOMB_CATS.length]}"</h3>
+                        <p className="text-xs text-slate-400">Empieza {players[bombHolderIdx % players.length]?.name}. Di una palabra y pasa el móvil.</p>
+                        <button
+                          onClick={() => {
+                            sound.playClick();
+                            setBombSecs(Math.floor(Math.random() * 20) + 15);
+                            setBombState('running');
+                          }}
+                          className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-red-600 font-black text-base uppercase"
+                        >
+                          🔥 Encender Mecha
+                        </button>
+                      </div>
+                    )}
+
+                    {bombState === 'running' && (
+                      <div className="space-y-4">
+                        <span className="text-5xl animate-bounce block">💣</span>
+                        <h3 className="text-lg font-black text-amber-400">"{BOMB_CATS[bombCatIdx % BOMB_CATS.length]}"</h3>
+                        <p className="text-sm font-black text-white">TIENE LA BOMBA: 📱 {players[bombHolderIdx % players.length]?.name}</p>
+                        <button
+                          onClick={() => {
+                            sound.playClick();
+                            setBombHolderIdx(prev => prev + 1);
+                          }}
+                          className="w-full py-6 rounded-2xl bg-gradient-to-r from-red-600 to-amber-500 font-black text-lg uppercase animate-pulse"
+                        >
+                          ¡PASAR BOMBA! ➔
+                        </button>
+                      </div>
+                    )}
+
+                    {bombState === 'exploded' && (
+                      <div className="space-y-4">
+                        <span className="text-6xl block">💥💥💥</span>
+                        <h3 className="text-2xl font-black text-red-400">¡¡BOOM!! EXPLOTÓ EN MANOS DE {players[bombHolderIdx % players.length]?.name}</h3>
+                        <p className="text-xs text-slate-300">Paga 3 tragos o chupito directo.</p>
+                        <button
+                          onClick={() => {
+                            sound.playClick();
+                            setBombCatIdx(prev => prev + 1);
+                            setBombState('idle');
+                          }}
+                          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#00E5FF] font-black text-xs uppercase"
+                        >
+                          Nueva Ronda con Otra Categoría
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* GAME: MAYOR O MENOR */}
+                {activeGameId === 'higher-lower' && (
+                  <div className="p-6 rounded-3xl glass-card-interactive text-center space-y-5">
+                    <span className="text-xs font-bold text-amber-400">🃏 Mayor o Menor • Racha: {hlStreak} aciertos</span>
+                    <div className="w-36 h-52 mx-auto rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-800 border-2 border-white/20 flex flex-col justify-between p-4 shadow-2xl">
+                      <span className={`text-2xl font-black text-left ${hlCurrentCard.suit === 'hearts' || hlCurrentCard.suit === 'diamonds' ? 'text-red-500' : 'text-white'}`}>
+                        {hlCurrentCard.label}
+                      </span>
+                      <span className={`text-5xl ${hlCurrentCard.suit === 'hearts' || hlCurrentCard.suit === 'diamonds' ? 'text-red-500' : 'text-white'}`}>
+                        {hlCurrentCard.suit === 'hearts' ? '♥' : hlCurrentCard.suit === 'diamonds' ? '♦' : hlCurrentCard.suit === 'clubs' ? '♣' : '♠'}
+                      </span>
+                      <span className="text-xs text-slate-400 text-right">VIP</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => {
+                          sound.playCardFlip();
+                          const next = hlDeck[Math.floor(Math.random() * hlDeck.length)];
+                          if (next.value >= hlCurrentCard.value) {
+                            sound.playSuccess();
+                            setHlStreak(prev => prev + 1);
+                          } else {
+                            sound.playExplosion();
+                            setHlStreak(0);
+                          }
+                          setHlCurrentCard(next);
+                        }}
+                        className="py-3.5 rounded-xl bg-emerald-600 font-black text-xs uppercase"
+                      >
+                        MAYOR 🔼
+                      </button>
+                      <button
+                        onClick={() => {
+                          sound.playCardFlip();
+                          const next = hlDeck[Math.floor(Math.random() * hlDeck.length)];
+                          if (next.value <= hlCurrentCard.value) {
+                            sound.playSuccess();
+                            setHlStreak(prev => prev + 1);
+                          } else {
+                            sound.playExplosion();
+                            setHlStreak(0);
+                          }
+                          setHlCurrentCard(next);
+                        }}
+                        className="py-3.5 rounded-xl bg-rose-600 font-black text-xs uppercase"
+                      >
+                        MENOR 🔽
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* GAME: RING OF FIRE */}
+                {activeGameId === 'ring-of-fire' && (
+                  <div className="p-6 rounded-3xl glass-card-interactive text-center space-y-5">
+                    <span className="text-xs font-bold text-rose-400">👑 Copa del Rey • {rofKings}/4 Reyes descubiertos</span>
+                    {!rofCurrentCard ? (
+                      <div
+                        onClick={() => {
+                          sound.playCardFlip();
+                          const card = rofDeck[Math.floor(Math.random() * rofDeck.length)];
+                          setRofCurrentCard(card);
+                          if (card.value === 13) {
+                            const newKings = rofKings + 1;
+                            setRofKings(newKings);
+                            if (newKings === 4) {
+                              sound.playExplosion();
+                              triggerConfetti();
+                            }
+                          }
+                        }}
+                        className="w-36 h-48 mx-auto rounded-2xl bg-gradient-to-tr from-[#8A2BE2] to-[#00E5FF] p-[2px] cursor-pointer"
+                      >
+                        <div className="w-full h-full bg-[#121218] rounded-2xl flex flex-col items-center justify-center p-3">
+                          <span className="text-4xl mb-2">👑</span>
+                          <span className="text-xs font-black uppercase text-white">Toca la baraja</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="p-4 rounded-2xl bg-white/5 space-y-1">
+                          <span className="text-2xl font-black text-white">{rofCurrentCard.label}</span>
+                          <h4 className="text-base font-black text-[#00E5FF]">
+                            {rofCurrentCard.value === 1 ? 'As: Cascada (Todos beben)' :
+                             rofCurrentCard.value === 2 ? '2: Tú eliges quién bebe' :
+                             rofCurrentCard.value === 3 ? '3: Bebes tú' :
+                             rofCurrentCard.value === 7 ? '7: Suelo (Último bebe)' :
+                             rofCurrentCard.value === 8 ? '8: Compañero de tragos' :
+                             rofCurrentCard.value === 13 ? 'Rey: Vierte a la Copa del Rey (¡4º Rey se la bebe!)' : 'Regla de previa'}
+                          </h4>
+                        </div>
+                        <button
+                          onClick={() => { sound.playClick(); setRofCurrentCard(null); }}
+                          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#8A2BE2] to-[#00E5FF] font-black text-xs uppercase"
+                        >
+                          Siguiente Carta
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              </div>
+            )}
+
+          </main>
+
+          {/* Footer */}
+          <footer className="w-full py-3 text-center text-[10px] text-slate-500 border-t border-white/5 bg-[#0A0A0C]/80">
+            PREVIA VIP • Diseñado para disfrutar con responsabilidad entre amigos
+          </footer>
+
+        </div>
+      );
+    }
+
+    // Mount React App
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
