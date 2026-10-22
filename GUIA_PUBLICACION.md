@@ -52,15 +52,29 @@ Crea la carpeta `www` dentro de `previa-app` y copia ahí `index.html` y `privac
 
 ### 1.1 Que funcione sin internet
 
-La app ya no depende de React, Tailwind ni Babel desde internet: todo va dentro del `index.html`. Lo único externo son las dos tipografías de Google Fonts. Sin conexión se ven con la letra del sistema, que queda bien, pero para que se vea igual siempre:
+La app ya no depende de React, Tailwind ni Babel desde internet: todo va dentro del `index.html`. Lo único externo son las tipografías de Google Fonts y la librería de las salas online (PeerJS, que solo se descarga al crear o entrar en una sala). Sin conexión, los juegos en un solo móvil funcionan igual y las letras se ven con la del sistema. Para que se vean igual siempre:
 
-1. Entra en [google-webfonts-helper](https://gwfh.mranftl.com/fonts) y descarga **Bricolage Grotesque** (400, 500, 700, 800) y **DM Mono** (400, 500) en formato `woff2`.
+1. Entra en [google-webfonts-helper](https://gwfh.mranftl.com/fonts) y descarga **Bricolage Grotesque** (400, 500, 700, 800), **DM Mono** (400, 500) y **Tilt Neon** (400) en formato `woff2`.
 2. Ponlas en `www/fonts/`.
 3. En `index.html`, sustituye las tres líneas `<link ... fonts.googleapis.com ...>` por el CSS `@font-face` que te da esa web.
 
 Apple rechaza apps que son "una web metida en una caja" y que no funcionan sin conexión (norma 4.2), así que este paso merece la pena.
 
-### 1.2 Icono y pantalla de carga
+### 1.2 Las salas online (cada uno en su móvil)
+
+Las salas funcionan con **WebRTC**: los móviles se conectan directamente entre ellos y el que crea la sala hace de "servidor" de la partida. Para encontrarse usan el servidor público y gratuito de **PeerJS** (peerjs.com). No hace falta ninguna cuenta ni pagar nada.
+
+Lo que conviene saber:
+
+- **Funcionan muy bien si todos estáis en la misma wifi**, que es lo normal en una previa.
+- **Con datos móviles, a veces no conectan.** Algunas operadoras ponen a sus clientes detrás de un tipo de red (NAT simétrica) por el que WebRTC no pasa sin un servidor intermedio llamado **TURN**. Si te pasa a menudo, puedes añadir uno gratuito o barato (Metered.ca tiene un plan gratis) en `PEER_OPTS`, dentro de `index.html`.
+- **El servidor de PeerJS es gratis pero no garantiza nada.** Si la app crece, monta tu propio PeerServer (es un programa de Node.js de código abierto) en Render, Railway o Fly.io y cambia la conexión en `index.html` para que apunte a él.
+- **Si el anfitrión cierra la app, la sala se acaba.** Los demás ven "Se ha perdido la conexión" y pueden volver a entrar si el anfitrión sigue ahí.
+- **En el Artifact de claude.ai las salas no funcionan**, porque ese entorno bloquea WebRTC. En GitHub Pages y dentro de la app de las tiendas sí funcionan.
+
+En los formularios de privacidad de las tiendas sigue valiendo "no se recogen datos": los nombres viajan entre los móviles de la sala y no llegan a ningún servidor tuyo. Ya está explicado en `privacidad.html`.
+
+### 1.3 Icono y pantalla de carga
 
 ```bash
 npm install -D @capacitor/assets
@@ -202,7 +216,7 @@ En [appstoreconnect.apple.com](https://appstoreconnect.apple.com) → **Apps →
 ### 4.6 Notas para el revisor (importante)
 Apple es estricta con este tipo de app. En **Información para la revisión de la app** escribe algo así:
 
-> Previa es un juego social para mayores de 18 que se juega con un solo móvil en grupo. No requiere cuenta ni conexión. Incluye un "modo sin alcohol" (Ajustes) que sustituye los tragos por puntos, y mensajes de consumo responsable. Nadie está obligado a beber: en todos los juegos se puede jugar con puntos.
+> Previa es un juego social para mayores de 18 que se juega en grupo, con un solo móvil o cada uno en el suyo uniéndose a una sala con un código de 4 letras (para probarlo hacen falta dos dispositivos con internet). No requiere cuenta. Incluye un "modo sin alcohol" (Ajustes) que sustituye los tragos por puntos, y mensajes de consumo responsable. Nadie está obligado a beber: en todos los juegos se puede jugar con puntos.
 
 Motivos de rechazo más habituales y cómo los cubre esta versión:
 

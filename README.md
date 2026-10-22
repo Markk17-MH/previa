@@ -1,8 +1,8 @@
 # Previa
 
-Juegos para la previa con un solo móvil para todo el grupo. Trece juegos, modo sin alcohol y sin registro.
+Juegos para la previa: con un solo móvil para todo el grupo o cada uno en el suyo, uniéndose a una sala con un código. Trece juegos, modo sin alcohol y sin registro.
 
-Es una web estática: abre `index.html` en el navegador y funciona. No necesita servidor ni compilación.
+Es una web estática: abre `index.html` en el navegador y funciona. No necesita servidor ni compilación. Las salas online usan WebRTC con PeerJS (servidor público gratuito para que los móviles se encuentren). Para probarlas, sirve la carpeta con un servidor local (por ejemplo `npx http-server`) y ábrela en dos pestañas o dos dispositivos.
 
 - `index.html`: la app entera.
 - `privacidad.html`: política de privacidad (necesaria para Google Play y el App Store).
