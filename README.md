@@ -7,7 +7,10 @@ Es una web estática: abre `index.html` en el navegador y funciona. No necesita 
 - `index.html`: la app entera.
 - `privacidad.html`: política de privacidad (necesaria para Google Play y el App Store).
 - `GUIA_PUBLICACION.md`: cómo subirla a las tiendas con Capacitor.
+- `build-seo.js`: genera las páginas para buscadores (`juegos-para-previas.html`, `yo-nunca-preguntas.html`, etc.) y `sitemap.xml`. Ejecuta `node build-seo.js` después de cambiar sus textos.
 - `build-web.js`: genera `web/previa.html` para publicarla como Artifact de claude.ai.
+
+Enlaces directos: `?sala=ABCD` abre la pantalla para entrar en esa sala y `?juego=nunca` abre ese juego.
 - `index.original.html`: la versión anterior, por si hace falta volver.
 
 ## Verla online con GitHub Pages

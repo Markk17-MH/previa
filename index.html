@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#0c0a0e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="description" content="Previa: 13 juegos para la previa con amigos. Verdad o reto, Yo nunca, El impostor, La bomba y más. Juega en un solo móvil o cada uno en el suyo con un código de sala. Gratis y sin registro." />
+  <meta name="description" content="Previa: 14 juegos para la previa con amigos. Verdad o reto, Yo nunca, El impostor, La bomba y más. Juega en un solo móvil o cada uno en el suyo con un código de sala. Gratis y sin registro." />
   <link rel="canonical" href="https://markk17-mh.github.io/previa/" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="es_ES" />
   <meta property="og:site_name" content="Previa" />
   <meta property="og:title" content="Previa · Juegos para la previa" />
-  <meta property="og:description" content="13 juegos para antes de salir. En un solo móvil o cada uno en el suyo con un código de sala. Gratis y sin registro." />
+  <meta property="og:description" content="14 juegos para antes de salir. En un solo móvil o cada uno en el suyo con un código de sala. Gratis y sin registro." />
   <meta property="og:url" content="https://markk17-mh.github.io/previa/" />
   <meta name="twitter:card" content="summary" />
   <title>Previa · Juegos para la previa con amigos</title>
@@ -208,6 +208,13 @@
     .game-meta { font-family: var(--mono); font-size: 11px; color: var(--dim); text-align: right; flex: none; }
     .new { font-style: normal; font-family: var(--mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mint); border: 1px solid currentColor; border-radius: 6px; padding: 1px 5px; box-shadow: 0 0 10px -3px var(--mint); }
     .foot { color: var(--dim); font-size: 13px; text-align: center; padding-top: 6px; }
+    .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 15px; }
+    .lv { min-height: 42px; border-radius: 11px; font-weight: 700; font-size: 15px; color: var(--muted); padding: 0 6px; }
+    .lv.on { background: var(--accent); color: var(--ink); box-shadow: 0 0 18px -4px var(--accent); }
+    .guides { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; justify-content: center; padding-top: 8px; }
+    .guides a { color: var(--muted); font-size: 13.5px; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--edge-hi); }
+    .guides .eyebrow { width: 100%; text-align: center; }
+    .pname.wrap { white-space: normal; font-weight: 500; font-size: 15.5px; }
 
     /* ---------- forms, lists, settings ---------- */
     .field { display: flex; flex-direction: column; gap: 8px; }
@@ -526,19 +533,28 @@
     'Si tu vida fuera una serie, ¿cómo se llamaría el capítulo de hoy?'
   ];
 
-  // a: 1 marks items that only make sense with alcohol (hidden in modo sin alcohol)
+  // a: 1 only makes sense with alcohol (hidden in modo sin alcohol)
+  // s: 1 spicy (hidden in nivel Suave) · x: 1 extra spicy (only in nivel Atrevido)
   const TRUTHS = [
     { t: '¿Cuál es la mentira más gorda que les has contado a tus padres para salir?', n: 2 },
-    { t: '¿Has besado a más de dos personas en la misma noche? Cuéntalo.', n: 3 },
-    { t: '¿Quién de esta habitación te parece más atractivo o atractiva?', n: 3 },
+    { t: '¿Has besado a más de dos personas en la misma noche? Cuéntalo.', n: 3, s: 1 },
+    { t: '¿Quién de esta habitación te parece más atractivo o atractiva?', n: 3, s: 1 },
     { t: '¿Alguna vez has mirado el móvil de tu pareja a escondidas?', n: 2 },
-    { t: '¿Tienes alguna fantasía que nunca hayas dicho en voz alta?', n: 4 },
-    { t: '¿Te liarías con el ex de alguien de este grupo si nadie se enterase?', n: 3 },
-    { t: '¿Has soñado alguna vez con alguien de aquí?', n: 4 },
+    { t: '¿Tienes alguna fantasía que nunca hayas dicho en voz alta?', n: 4, s: 1 },
+    { t: '¿Te liarías con el ex de alguien de este grupo si nadie se enterase?', n: 3, s: 1 },
+    { t: '¿Has soñado alguna vez con alguien de aquí?', n: 4, s: 1 },
+    { t: '¿Cuál es el sitio más raro donde te has liado con alguien?', n: 3, x: 1 },
+    { t: 'Si tuvieras que tener una cita esta noche con alguien de aquí, ¿con quién y por qué?', n: 3, x: 1 },
+    { t: '¿Qué es lo más atrevido que has hecho por mensaje?', n: 4, x: 1 },
+    { t: 'Puntúa del 1 al 10 cómo besa tu ex. Sin mentir.', n: 3, x: 1 },
+    { t: '¿Con quién de tus amigos (no de aquí) te liarías?', n: 3, x: 1 },
+    { t: '¿Qué es lo que más te pone de alguien nada más conocerle?', n: 2, x: 1 },
+    { t: '¿Qué serie o película te recuerda a tu peor rollo?', n: 1 },
+    { t: '¿Cuál ha sido tu momento más ridículo intentando ligar?', n: 2 },
     { t: '¿A quién de este grupo bloquearías una semana si pudieras?', n: 3 },
     { t: '¿Cuál es el mensaje más vergonzoso que has enviado borracho o borracha?', n: 2, a: 1 },
     { t: '¿Qué es lo primero que miras en alguien que te gusta?', n: 1 },
-    { t: '¿Cuál ha sido tu peor beso y con quién?', n: 3 },
+    { t: '¿Cuál ha sido tu peor beso y con quién?', n: 3, s: 1 },
     { t: '¿Qué es lo que más te molesta de la persona a tu izquierda?', n: 2 },
     { t: 'Enseña tu última búsqueda en internet.', n: 3 },
     { t: '¿Has fingido alguna vez estar enfermo o enferma para no quedar con alguien de aquí?', n: 2 },
@@ -550,7 +566,7 @@
     { t: 'Enseña al grupo la última foto de tu galería.', n: 3 },
     { t: 'Bebe del vaso de la persona a tu izquierda con las manos a la espalda.', n: 2, a: 1 },
     { t: 'Deja que la persona a tu derecha suba una historia desde tu cuenta.', n: 4 },
-    { t: 'Haz un masaje de hombros a quien tengas enfrente durante treinta segundos.', n: 2 },
+    { t: 'Haz un masaje de hombros a quien tengas enfrente durante treinta segundos.', n: 2, s: 1 },
     { t: 'Habla con acento argentino hasta tu próximo turno.', n: 2 },
     { t: 'Deja que el grupo te escriba algo en la mano con boli.', n: 2 },
     { t: 'Llama a alguien de tu familia y dile que le quieres mucho. Sin explicar nada.', n: 3 },
@@ -558,15 +574,27 @@
     { t: 'Declárale tu amor a la lámpara más cercana durante veinte segundos.', n: 2 },
     { t: 'Haz tu mejor imitación de un presentador de telediario anunciando lo que hay en la mesa.', n: 1 },
     { t: 'Intercambia una prenda con la persona de tu izquierda hasta el final de la previa.', n: 3 },
-    { t: 'Lee en voz alta el último mensaje que has enviado.', n: 3 }
+    { t: 'Lee en voz alta el último mensaje que has enviado.', n: 3 },
+    { t: 'Haz que el grupo elija a alguien y susúrrale al oído un piropo inventado en el momento.', n: 2, x: 1 },
+    { t: 'Deja que la persona a tu izquierda lea tu último chat con tu crush.', n: 4, x: 1 },
+    { t: 'Baila lento con quien el grupo elija durante media canción.', n: 3, x: 1 },
+    { t: 'Manda un emoji de fuego a la tercera persona de tus chats recientes.', n: 3, x: 1 },
+    { t: 'Haz tu mejor mirada seductora a cámara y deja que el grupo decida si la subes.', n: 2, x: 1 },
+    { t: 'Haz una foto de grupo en diez segundos con la pose más absurda posible.', n: 1 },
+    { t: 'Canta el estribillo de la última canción que has escuchado.', n: 2 }
   ];
   const NUNCA = [
     'he mirado el móvil de mi pareja a escondidas',
-    'me he liado con el ex de un amigo o amiga',
+    { t: 'me he liado con el ex de un amigo o amiga', s: 1 },
     'he vomitado en un taxi',
     'he mandado un mensaje a las 4 de la mañana del que me arrepentí',
-    'me he liado con alguien en el baño de una discoteca',
-    'he pensado en alguien de este grupo de forma poco inocente',
+    { t: 'me he liado con alguien en el baño de una discoteca', s: 1 },
+    { t: 'he pensado en alguien de este grupo de forma poco inocente', s: 1 },
+    { t: 'me he liado con dos personas de la misma fiesta', x: 1 },
+    { t: 'he mandado una foto de la que me arrepiento', x: 1 },
+    { t: 'me he liado con alguien sin saber su nombre', x: 1 },
+    { t: 'he tenido una cita con dos personas el mismo día', x: 1 },
+    { t: 'he ligado con alguien de esta habitación', x: 1 },
     'me he despertado sin saber cómo llegué a casa',
     'he dicho «te quiero» sin sentirlo',
     'me he colado en un sitio sin pagar',
@@ -586,11 +614,33 @@
     'he hecho ghosting',
     'me han hecho ghosting',
     'me he enamorado de alguien en una noche',
-    'he olvidado el nombre de alguien con quien me he liado',
+    { t: 'he olvidado el nombre de alguien con quien me he liado', s: 1 },
     'he dormido en un sitio que no era una cama',
     'he ido a trabajar o a clase sin dormir',
     'he cotilleado el móvil de alguien de esta mesa',
     'me he hecho un tatuaje del que me arrepiento'
+  ];
+  const PARANOIA = [
+    '¿Quién de aquí es más probable que tenga un perfil falso en redes?',
+    '¿Con quién de aquí te irías de viaje un mes?',
+    '¿Quién de aquí crees que miente más?',
+    '¿A quién de aquí le contarías un secreto muy gordo?',
+    '¿Quién de aquí te parece que liga más?',
+    '¿Quién de aquí sería peor compañero de piso?',
+    '¿A quién de aquí no le dejarías tu móvil desbloqueado?',
+    '¿Quién de aquí tiene peor gusto para elegir pareja?',
+    '¿Quién de aquí acabará siendo famoso o famosa?',
+    '¿A quién de aquí llamarías si tuvieras que esconder algo?',
+    '¿Quién de aquí crees que cotillea más?',
+    '¿Quién de aquí te parece más atractivo o atractiva?',
+    '¿Con quién de aquí no irías nunca de fiesta?',
+    '¿Quién de aquí crees que tiene un crush secreto en el grupo?',
+    '¿Quién de aquí sería el peor jefe?',
+    '¿Quién de aquí se cree más gracioso de lo que es?',
+    '¿Con quién de aquí te casarías si tuvieras que hacerlo mañana?',
+    '¿Quién de aquí sobreviviría menos en una isla desierta?',
+    '¿A quién de aquí le confesarías tu peor noche?',
+    '¿Quién de aquí crees que habla mal de los demás cuando no están?'
   ];
   const PROBABLE = [
     'acabe esta noche con una multa',
@@ -688,11 +738,15 @@
     view: store.get('adult', false) ? 'home' : 'gate',
     players: store.get('players', []),
     sober: store.get('sober', false),
+    level: store.get('level', 'clasico'),
+    custom: store.get('custom', { nunca: [], verdad: [], reto: [] }),
     game: null,
     g: {},
     sheet: null,
     focus: null,
-    form: { myname: store.get('myname', ''), code: '', pname: '' },
+    form: { myname: store.get('myname', ''), code: '', pname: '', cardtxt: '' },
+    cardKind: 'nunca',
+    pending: null,
     netBusy: null,
     netErr: null,
     hostView: null,
@@ -714,7 +768,7 @@
   const meIdx = () => online() ? S.players.findIndex(p => p.id === net.me) : -1;
   let ACTOR = -1;
   // Game actions guests may send to the host. Everything else stays on the device.
-  const GAME_ACT = /^(m|v|n|p|e|l|b|i|h|c|r|mi|rx)-|^(countdown|restart)$/;
+  const GAME_ACT = /^(m|v|n|p|e|l|b|i|h|c|r|mi|rx|pa)-|^(countdown|restart)$/;
 
   let peerLoading = null;
   function loadPeer() {
@@ -734,7 +788,7 @@
 
   function sync() {
     if (!isHost()) return;
-    const msg = { t: 'state', view: S.view, game: S.game, g: S.g, players: S.players, sober: S.sober, fx: net.fx };
+    const msg = { t: 'state', view: S.view, game: S.game, g: S.g, players: S.players, sober: S.sober, level: S.level, fx: net.fx };
     net.fx = null;
     for (const c of Object.values(net.conns)) if (c.open) { try { c.send(msg); } catch {} }
   }
@@ -815,8 +869,8 @@
   function guestReceive(msg) {
     if (!msg || typeof msg !== 'object') return;
     if (msg.t === 'state') {
-      S.players = msg.players; S.sober = msg.sober; S.game = msg.game; S.g = msg.g || {}; S.hostView = msg.view;
-      S.view = msg.view === 'play' && S.game ? 'play' : 'room';
+      S.players = msg.players; S.sober = msg.sober; S.level = msg.level || 'clasico'; S.game = msg.game; S.g = msg.g || {}; S.hostView = msg.view;
+      S.view = msg.view === 'play' && S.game ? 'play' : msg.view === 'summary' ? 'summary' : 'room';
       if (msg.fx && sound[msg.fx[0]]) sound[msg.fx[0]](msg.fx[1]);
       render();
     } else if (msg.t === 'bye') {
@@ -840,6 +894,7 @@
     S.players = S.localPlayers || store.get('players', []);
     S.localPlayers = null;
     S.sober = store.get('sober', false);
+    S.level = store.get('level', 'clasico');
     S.hostView = null;
   }
   function netFail(msg) {
@@ -870,10 +925,26 @@
   // Draws from a list without repeats until it runs out. The pool lives in S.g so it can be synced.
   const draw = (key, list) => {
     const p = S.g._p || (S.g._p = {});
-    if (!p[key] || !p[key].length) p[key] = shuffle(list.map((_, i) => i));
+    if (!p[key] || !p[key].length || p[key].some(i => i >= list.length)) p[key] = shuffle(list.map((_, i) => i));
     return list[p[key].pop()];
   };
-  const clean = list => S.sober ? list.filter(x => !x.a) : list;
+  const LEVELS = { suave: 'Suave', clasico: 'Clásico', atrevido: 'Atrevido' };
+  const LEVEL_HINT = {
+    suave: 'Para romper el hielo o con gente que acabáis de conocer.',
+    clasico: 'Picante, pero sin pasarse.',
+    atrevido: 'Solo con confianza. Más preguntas y retos subidos de tono.'
+  };
+  const SITE = 'https://markk17-mh.github.io/previa/';
+  // Public address of this page, or the GitHub Pages one when running locally or inside the store app.
+  const shareBase = () => /^https?:$/.test(location.protocol) && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? location.origin + location.pathname : SITE;
+  const clean = list => list.filter(x =>
+    !(S.sober && x.a) &&
+    !(S.level === 'suave' && (x.s || x.x)) &&
+    !(S.level !== 'atrevido' && x.x));
+  const txt = it => typeof it === 'string' ? it : it.t;
+  // Base cards plus the group's own ("Tus cartas"), filtered by level and alcohol mode.
+  const BASE = { nunca: NUNCA, verdad: TRUTHS, reto: DARES };
+  const deck = kind => clean(BASE[kind].concat((S.custom[kind] || []).map(t => kind === 'nunca' ? { t } : { t, n: 2 })));
   const mod = i => ((i % S.players.length) + S.players.length) % S.players.length;
   const name = i => esc(S.players[mod(i)].name);
   const active = () => S.players.map((_, i) => i).filter(i => !S.players[i].off);
@@ -901,6 +972,7 @@
     gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
     help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17.5" r=".6" fill="currentColor"/></svg>',
     x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    crown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>',
     phones: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="8" height="14" rx="2"/><rect x="13" y="4" width="8" height="14" rx="2"/><path d="M6.5 17h1M16.5 15h1"/></svg>'
   };
 
@@ -951,6 +1023,54 @@
   // reaction ranking; "early" or missing counts as last
   const rxVal = t => t == null || t === 'early' ? Infinity : t;
   const rxRank = (times, idxs) => idxs.map(i => ({ i, t: times[i] })).sort((a, b) => rxVal(a.t) - rxVal(b.t));
+
+  // 1080×1920 story image of the night's ranking, drawn in the app's neon style.
+  async function summaryImage() {
+    try { await Promise.all([document.fonts.load('120px "Tilt Neon"'), document.fonts.load('700 52px "Bricolage Grotesque"'), document.fonts.load('34px "DM Mono"')]); } catch {}
+    const W = 1080, H = 1920, cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const x = cv.getContext('2d');
+    x.fillStyle = '#0c0a0e'; x.fillRect(0, 0, W, H);
+    const glow = (cx, cy, r, col, a) => {
+      const g = x.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)');
+      x.globalAlpha = a; x.fillStyle = g; x.fillRect(0, 0, W, H); x.globalAlpha = 1;
+    };
+    glow(120, 160, 1000, '#ff4fa0', 0.4); glow(1000, 1850, 900, '#ffbe3b', 0.2);
+    const neon = (text, y, size, col, core) => {
+      x.font = `${size}px "Tilt Neon", sans-serif`; x.textAlign = 'center';
+      x.fillStyle = col; x.shadowColor = col;
+      for (const b of [70, 34, 14]) { x.shadowBlur = b; x.fillText(text, W / 2, y); }
+      x.shadowBlur = 0; x.fillStyle = core; x.fillText(text, W / 2, y);
+    };
+    const label = (text, y, size = 32, col = '#aaa2ad') => { x.font = `${size}px "DM Mono", monospace`; x.textAlign = 'center'; x.fillStyle = col; x.fillText(text, W / 2, y); };
+    const fit = (t, max) => { let s = t; while (x.measureText(s).width > max && s.length > 1) s = s.slice(0, -1); return s === t ? t : s + '…'; };
+
+    neon('Previa.', 270, 170, '#ff4fa0', '#ffe3f0');
+    label(`RESUMEN DE LA PREVIA · ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase()}`, 360);
+    const rank = S.players.filter(p => !p.off).slice().sort((a, b) => (b.score || 0) - (a.score || 0));
+    label('CORONA DE LA NOCHE', 500, 34);
+    x.font = '120px "Tilt Neon", sans-serif';
+    neon(fit(rank[0] ? rank[0].name : '—', 900), 640, 120, '#ffbe3b', '#fff3d6');
+    label(`${rank[0] ? rank[0].score || 0 : 0} ${unit()}`, 715, 40, '#f6f0e8');
+
+    const rows = rank.slice(0, 8), top = 800, rowH = 104, boxH = rows.length * rowH + 40;
+    x.fillStyle = 'rgba(255,255,255,0.06)'; x.strokeStyle = 'rgba(255,255,255,0.16)'; x.lineWidth = 2;
+    x.beginPath();
+    if (x.roundRect) x.roundRect(80, top, W - 160, boxH, 40); else x.rect(80, top, W - 160, boxH);
+    x.fill(); x.stroke();
+    rows.forEach((p, k) => {
+      const y = top + 20 + rowH * k + rowH / 2 + 16;
+      x.textAlign = 'left'; x.fillStyle = '#6e6773'; x.font = '34px "DM Mono", monospace'; x.fillText(String(k + 1).padStart(2, '0'), 130, y);
+      x.fillStyle = '#f6f0e8'; x.font = '700 52px "Bricolage Grotesque", sans-serif'; x.fillText(fit(p.name, 560), 220, y);
+      x.textAlign = 'right'; x.fillStyle = k === 0 ? '#ffbe3b' : '#aaa2ad'; x.font = '36px "DM Mono", monospace'; x.fillText(`${p.score || 0} ${unit()}`, W - 130, y);
+      if (k < rows.length - 1) { x.fillStyle = 'rgba(255,255,255,0.1)'; x.fillRect(130, top + 20 + rowH * (k + 1), W - 260, 2); }
+    });
+
+    label('JUEGA GRATIS, SIN DESCARGAR NADA', H - 230, 32);
+    neon(SITE.replace(/^https:\/\//, '').replace(/\/$/, ''), H - 150, 56, '#ff4fa0', '#ffe3f0');
+    return cv;
+  }
 
   function misionClock() {
     const g = S.g;
@@ -1031,7 +1151,8 @@
       rules: () => [
         'En tu turno eliges verdad o reto.',
         'Si cumples, pasa el turno.',
-        'Si te niegas, te llevas lo que marque la carta.'
+        'Si te niegas, te llevas lo que marque la carta.',
+        'Si al grupo le parece demasiado fuerte, puede vetarla y sale otra sin castigo.'
       ],
       start() { S.g = { turn: randOn(), card: null, kind: null }; },
       view() {
@@ -1045,7 +1166,8 @@
         }
         return `${turn(g.turn)}
         ${card(g.kind === 't' ? 'Verdad' : 'Reto', g.card.t, g.kind === 't' ? 'sky' : 'tomato', `Si se niega: ${pen(g.card.n)}`)}
-        ${mine ? `<div class="duo"><button class="btn alt" data-act="v-done" data-arg="no">Me niego</button><button class="btn hot" data-act="v-done" data-arg="ok">Hecho</button></div>` : waitFor(g.turn, 'cumpla')}`;
+        ${mine ? `<div class="duo"><button class="btn alt" data-act="v-done" data-arg="no">Me niego</button><button class="btn hot" data-act="v-done" data-arg="ok">Hecho</button></div>` : waitFor(g.turn, 'cumpla')}
+        <button class="link" data-act="v-veto" style="align-self:center">El grupo la veta: otra carta sin castigo</button>`;
       }
     },
     {
@@ -1057,7 +1179,7 @@
         S.sober ? 'Quien lo haya hecho, se apunta un punto en el marcador.' : 'Quien lo haya hecho, bebe.',
         'Las explicaciones son opcionales, pero recomendables.'
       ],
-      start() { S.g = { n: 1 }; S.g.cur = draw('n', NUNCA); },
+      start() { S.g = { n: 1 }; S.g.cur = txt(draw('n', deck('nunca'))); },
       view() {
         const g = S.g;
         return `${card(`Nº ${g.n}`, `Yo nunca ${g.cur}.`, 'mint', S.sober ? 'Si lo has hecho, suma un punto.' : 'Si lo has hecho, bebe.')}
@@ -1111,6 +1233,35 @@
         }
         return `${verdict('Explotó en manos de', isMe(g.holder) ? 'Ti' : name(g.holder), pen(3), 'tomato')}
         <div class="stackbtns"><button class="btn" data-act="b-again">Otra ronda</button></div>`;
+      }
+    },
+    {
+      id: 'paranoia', title: 'Paranoia', color: 'lilac', min: 3, isNew: true, time: '15–30 min',
+      short: 'Una pregunta secreta, un nombre en voz alta.',
+      blurb: 'Alguien lee una pregunta en secreto y contesta en voz alta solo con un nombre. Saber la pregunta tiene un precio.',
+      rules: () => [
+        online() ? 'La pregunta solo aparece en el móvil de quien tiene el turno.' : 'Pásale el móvil a quien tiene el turno. Solo esa persona lee la pregunta.',
+        'Contesta en voz alta solo con un nombre de los que estáis jugando y tócalo en la pantalla.',
+        `La persona nombrada puede pagar ${pen(2)} para que se lea la pregunta. Si no, se queda con la duda.`
+      ],
+      start() { S.g = { phase: 'ask', turn: randOn(), shown: false, target: null, open: false }; S.g.q = draw('q', PARANOIA); },
+      view() {
+        const g = S.g;
+        if (g.phase === 'ask') {
+          if (online() && !isMe(g.turn)) return `${turn(g.turn)}${verdict('Pregunta secreta', '¿?', `${name(g.turn)} está leyendo su pregunta…`, 'lilac')}`;
+          if (!online() && !g.shown) {
+            return `<div class="pass"><span class="eyebrow">Pregunta secreta</span><h2 class="pass-name">Pásale el móvil a<b class="neon">${name(g.turn)}</b></h2></div>
+            <button class="reveal" data-act="pa-show"><b>Ver la pregunta</b><span>Que nadie más mire la pantalla</span></button>`;
+          }
+          return `${turn(g.turn)}${card('Solo para ti', g.q, 'lilac', 'Contesta en voz alta con un nombre y tócalo:')}
+          <div class="chips">${S.players.map((p, i) => p.off || i === mod(g.turn) ? '' : `<button class="chip" data-act="pa-pick" data-arg="${i}">${esc(p.name)}</button>`).join('')}</div>`;
+        }
+        const canPay = !online() || isMe(g.target) || meIdx() === 0;
+        return `${verdict(`${name(g.turn)} ha dicho`, isMe(g.target) ? 'Tú' : name(g.target), g.open ? '' : '¿Por qué será?', 'lilac')}
+        ${g.open ? card('La pregunta era', g.q, 'lilac')
+          : canPay ? `<button class="btn" data-act="pa-open">${isMe(g.target) ? 'Pagar' : `${name(g.target)} paga`} ${pen(2)} para ver la pregunta</button>`
+          : waitFor(g.target, 'decida si paga por saber la pregunta')}
+        <div class="stackbtns"><button class="btn hot" data-act="pa-next">Siguiente</button></div>`;
       }
     },
     {
@@ -1222,7 +1373,7 @@
       }
     },
     {
-      id: 'esto', title: 'Esto o aquello', color: 'sky', min: 3, isNew: true, time: '10–20 min',
+      id: 'esto', title: 'Esto o aquello', color: 'sky', min: 3, time: '10–20 min',
       short: 'Dos opciones. La minoría pierde.',
       blurb: 'Dos opciones y a la de tres todos eligen. Pierde quien piense distinto al resto.',
       rules: () => [
@@ -1243,7 +1394,7 @@
       }
     },
     {
-      id: 'reflejos', title: 'Reflejos', color: 'mint', min: 2, isNew: true, time: '5–10 min',
+      id: 'reflejos', title: 'Reflejos', color: 'mint', min: 2, time: '5–10 min',
       short: 'Toca cuando se ponga verde.',
       blurb: 'Toca la pantalla en cuanto cambie de color. El más lento lo paga.',
       rules: () => [
@@ -1291,7 +1442,7 @@
       }
     },
     {
-      id: 'ruleta', title: 'La ruleta', color: 'pink', min: 2, isNew: true, time: 'Lo que dure',
+      id: 'ruleta', title: 'La ruleta', color: 'pink', min: 2, time: 'Lo que dure',
       short: 'Le toca a alguien. Algo le toca.',
       blurb: 'Gira, cae en alguien y le toca lo que diga la ruleta. Ideal entre juego y juego.',
       rules: () => [
@@ -1309,7 +1460,7 @@
       }
     },
     {
-      id: 'mimica', title: 'Mímica', color: 'tomato', min: 4, isNew: true, time: '20–30 min',
+      id: 'mimica', title: 'Mímica', color: 'tomato', min: 4, time: '20–30 min',
       short: 'Por equipos, sin hablar, contra el reloj.',
       blurb: 'Dos equipos y sesenta segundos para hacer acertar todo lo que puedas sin abrir la boca.',
       rules: () => [
@@ -1374,6 +1525,13 @@
         <h1 class="wordmark neon">Previa<span class="neon">.</span></h1>
         <p class="lede">${GAMES.length} juegos para antes de salir. En un solo móvil o cada uno en el suyo.</p>
       </section>
+      <div class="field">
+        <div class="levels glass" role="radiogroup" aria-label="Nivel">${Object.entries(LEVELS).map(([k, l]) => `<button class="lv ${S.level === k ? 'on' : ''}" data-act="level" data-arg="${k}" role="radio" aria-checked="${S.level === k}">${l}</button>`).join('')}</div>
+        <p class="fine center">${LEVEL_HINT[S.level]}</p>
+      </div>
+      ${S.players.some(p => p.score > 0) ? `<button class="strip glass lit" style="--c:var(--mustard)" data-act="nav" data-arg="summary">
+        <span class="glyph">${ic.crown}</span>
+        <span class="strip-text"><b>Cerrar la previa</b><small>Ver quién se lleva la corona y compartirlo</small></span>${ic.chev}</button>` : ''}
       ${isHost() ? '' : `<button class="strip glass" data-act="nav" data-arg="players">
         ${n ? `<span class="avatars">${avatars(list)}</span>` : ''}
         <span class="strip-text"><b>${n ? `${n} ${n === 1 ? 'jugador' : 'jugadores'} en este móvil` : 'Jugar en este móvil'}</b><small>${n ? S.players.map(p => esc(p.name)).join(', ') : 'Añade al grupo para repartir turnos'}</small></span>
@@ -1386,7 +1544,40 @@
         <span class="game-text"><span class="game-title">${g.title}${g.isNew ? '<em class="new">Nuevo</em>' : ''}</span><span class="game-blurb">${g.short}</span></span>
         <span class="game-meta">${g.min}+</span>
       </button></li>`).join('')}</ul>
+      <nav class="guides"><span class="eyebrow">Guías</span>
+        <a href="juegos-para-previas.html">Juegos para previas</a>
+        <a href="yo-nunca-preguntas.html">Preguntas de Yo nunca</a>
+        <a href="verdad-o-reto-online.html">Verdad o reto online</a>
+        <a href="juegos-para-previas-sin-alcohol.html">Previas sin alcohol</a>
+      </nav>
       <p class="foot">${S.sober ? 'Pásalo bien.' : 'Bebe con cabeza. Si conduces, hoy toca agua.'}</p>`;
+    },
+
+    summary: () => {
+      const rank = S.players.map((p, i) => ({ p, i })).filter(x => !x.p.off).sort((a, b) => (b.p.score || 0) - (a.p.score || 0));
+      if (!rank.length) return `<header class="top">${backBtn()}<span class="top-title">Resumen</span><span class="spacer"></span></header><p class="empty">Todavía no hay nadie en el marcador.</p>`;
+      const top = rank[0], low = rank[rank.length - 1];
+      const canReset = !online() || isHost();
+      return `<header class="top">${backBtn(online() && !isHost() ? 'Salir de la sala' : 'Volver')}<span class="top-title">Resumen de la previa</span><span class="spacer"></span></header>
+      ${verdict('Corona de la noche', isMe(top.i) ? 'Tú' : name(top.i), `${top.p.score || 0} ${unit()}`, 'mustard')}
+      <ol class="ranking panel glass">${rank.map((r, k) => `<li><span class="pos">${String(k + 1).padStart(2, '0')}</span><span class="nm">${name(r.i)}</span><span class="ms">${r.p.score || 0} ${unit()}</span></li>`).join('')}</ol>
+      ${rank.length > 1 ? `<p class="sub center">Sin un rasguño: <b>${name(low.i)}</b>, con ${low.p.score || 0} ${unit()}.</p>` : ''}
+      <div class="stackbtns">
+        <button class="btn hot" data-act="share-img">Compartir en historias</button>
+        ${canReset ? `<button class="btn alt" data-act="new-night">Empezar otra previa</button>` : ''}
+      </div>`;
+    },
+
+    cartas: () => {
+      const kinds = { nunca: 'Yo nunca', verdad: 'Verdades', reto: 'Retos' };
+      const ph = { nunca: 'Ej: he llorado viendo Shrek', verdad: 'Ej: ¿Qué es lo que más echas de menos de tu ex?', reto: 'Ej: Llama a tu madre y cántale algo' };
+      const list = S.custom[S.cardKind] || [];
+      return `<header class="top">${backBtn()}<span class="top-title">Tus cartas</span><span class="spacer"></span></header>
+      <div><h2 class="h2">Las cartas de tu grupo</h2><p class="sub" style="margin-top:6px">Escribid vuestras propias frases. Se mezclan con las de la app y se guardan en este móvil.</p></div>
+      <div class="levels glass">${Object.entries(kinds).map(([k, l]) => `<button class="lv ${S.cardKind === k ? 'on' : ''}" data-act="ckind" data-arg="${k}">${l} · ${(S.custom[k] || []).length}</button>`).join('')}</div>
+      <form class="add" data-submit="add-card"><input class="input" id="cardtxt" name="t" maxlength="140" placeholder="${ph[S.cardKind]}" autocomplete="off" enterkeyhint="done" value="${esc(S.form.cardtxt || '')}" /><button class="btn hot sm" type="submit">Añadir</button></form>
+      ${list.length ? `<ul class="plist panel glass">${list.map((t, i) => `<li><span class="pname wrap">${S.cardKind === 'nunca' ? 'Yo nunca ' : ''}${esc(t)}</span><button class="x" data-act="del-card" data-arg="${i}" aria-label="Borrar">${ic.x}</button></li>`).join('')}</ul>`
+        : `<p class="empty">Todavía no hay ninguna.</p>`}`;
     },
 
     players: () => `<header class="top">${backBtn()}<span class="top-title">Grupo</span><span class="spacer"></span></header>
@@ -1431,7 +1622,7 @@
       <div class="panel glass pad roomcode">
         <span class="eyebrow">Código de la sala</span>
         <b class="neon">${net.code}</b>
-        <button class="link" data-act="room-copy">Copiar código</button>
+        <div class="chips" style="justify-content:center"><button class="chip" data-act="room-invite">Invitar con un enlace</button><button class="chip" data-act="room-copy">Copiar código</button></div>
       </div>
       ${host ? `<p class="sub center">Los demás abren Previa, tocan <b>Jugar cada uno en su móvil</b> y escriben el código.</p>` : ''}
       ${waiting}
@@ -1439,6 +1630,7 @@
       ${list}
       <div class="stackbtns">
         ${host ? `<button class="btn hot" data-act="nav" data-arg="home">Elegir juego</button>` : ''}
+        ${host && S.players.some(p => p.score > 0) ? `<button class="btn" data-act="nav" data-arg="summary">Cerrar la previa y ver el resumen</button>` : ''}
         <button class="btn alt" data-act="ask-leave">${host ? 'Cerrar la sala' : 'Salir de la sala'}</button>
       </div>`;
     },
@@ -1446,6 +1638,7 @@
     settings: () => `<header class="top">${backBtn()}<span class="top-title">Ajustes</span><span class="spacer"></span></header>
       <div class="panel glass">
         <button class="setting" data-act="toggle" data-arg="sober"><span class="setting-text"><b>Modo sin alcohol</b><small>Los castigos se cuentan en puntos, no en tragos</small></span><span class="switch ${S.sober ? 'on' : ''}"></span></button>
+        <button class="setting" data-act="nav" data-arg="cartas"><span class="setting-text"><b>Tus cartas</b><small>Añade vuestros propios «yo nunca», verdades y retos</small></span>${ic.chev}</button>
         <button class="setting" data-act="toggle" data-arg="sound"><span class="setting-text"><b>Sonido y vibración</b><small>Efectos al pasar cartas y en las cuentas atrás</small></span><span class="switch ${sound.on ? 'on' : ''}"></span></button>
         <button class="setting" data-act="wipe"><span class="setting-text"><b>Borrar datos</b><small>Quita el grupo, el marcador y las preferencias</small></span></button>
       </div>
@@ -1524,7 +1717,51 @@
   // ---------- actions ----------
   const G = () => gameById(S.game);
   const A = {
-    adult() { store.set('adult', true); sound.win(); go('home'); },
+    adult() { store.set('adult', true); sound.win(); go('home'); openDeepLink(); },
+    level(k) {
+      if (!LEVELS[k] || (online() && !isHost())) return;
+      S.level = k; store.set('level', k); sound.click(); render();
+    },
+    ckind(k) { if (BASE[k]) { S.cardKind = k; sound.click(); render(); } },
+    'add-card'(form) {
+      let t = form.t.value.trim();
+      if (S.cardKind === 'nunca') t = t.replace(/^yo nunca\s*/i, '');
+      t = t.replace(/\.+$/, '');
+      if (!t) return;
+      (S.custom[S.cardKind] = S.custom[S.cardKind] || []).push(t);
+      store.set('custom', S.custom); sound.click();
+      S.form.cardtxt = ''; S.focus = 'cardtxt'; render();
+    },
+    'del-card'(i) { S.custom[S.cardKind].splice(+i, 1); store.set('custom', S.custom); sound.click(); render(); },
+    async 'share-img'(_, el) {
+      if (el) el.textContent = 'Preparando la imagen…';
+      const cv = await summaryImage();
+      const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+      if (el) el.textContent = 'Compartir en historias';
+      if (!blob) return;
+      const file = new File([blob], 'previa-resumen.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: 'Previa', text: `Así ha ido la previa. Juega gratis: ${SITE}` }); return; }
+        catch (e) { if (e && e.name === 'AbortError') return; }
+      }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = 'previa-resumen.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    },
+    'new-night'() {
+      if (online() && !isHost()) return;
+      S.players.forEach(p => p.score = 0); savePlayers(); sound.win(); go('home');
+    },
+    async 'room-invite'(_, el) {
+      const url = `${shareBase()}?sala=${net.code}`;
+      const text = `Únete a mi previa con el código ${net.code}`;
+      if (navigator.share) {
+        try { await navigator.share({ title: 'Previa', text, url }); return; }
+        catch (e) { if (e && e.name === 'AbortError') return; }
+      }
+      try { await navigator.clipboard.writeText(`${text}: ${url}`); if (el) el.textContent = 'Enlace copiado'; } catch {}
+    },
     nav(v) { sound.click(); go(v); },
     back() {
       sound.click();
@@ -1636,7 +1873,16 @@
       const g = S.g;
       if (g.card || !canAct(g.turn, ACTOR)) return;
       sound.flip(); g.kind = k === 't' ? 't' : 'd';
-      g.card = g.kind === 't' ? draw('t', clean(TRUTHS)) : draw('d', clean(DARES));
+      g.card = g.kind === 't' ? draw('t', deck('verdad')) : draw('d', deck('reto'));
+      render();
+    },
+    // The group vetoes a card that goes too far: new card, no penalty.
+    'v-veto'() {
+      const g = S.g;
+      if (!g.card) return;
+      sound.flip();
+      g.card = g.kind === 't' ? draw('t', deck('verdad')) : draw('d', deck('reto'));
+      g.vetos = (g.vetos || 0) + 1;
       render();
     },
     'v-done'(r) {
@@ -1647,7 +1893,7 @@
     },
 
     // yo nunca
-    'n-next'() { sound.flip(); S.g.cur = draw('n', NUNCA); S.g.n++; render(); },
+    'n-next'() { sound.flip(); S.g.cur = txt(draw('n', deck('nunca'))); S.g.n++; render(); },
 
     // probable / esto
     'p-next'() { clearClock(); sound.flip(); S.g.cur = draw('p', PROBABLE); S.g.cd = null; render(); },
@@ -1679,6 +1925,26 @@
       g.holder = mod(nextOn(g.holder)); sound.click(); render();
     },
     'b-again'() { if (S.g.state !== 'boom') return; sound.flip(); S.g.cat = draw('c', CATS); S.g.state = 'idle'; render(); },
+
+    // paranoia
+    'pa-show'() { sound.flip(); S.g.shown = true; render(); },
+    'pa-pick'(i) {
+      const g = S.g;
+      if (g.phase !== 'ask' || !canAct(g.turn, ACTOR) || !S.players[+i] || +i === mod(g.turn)) return;
+      g.target = +i; g.phase = 'said'; sound.flip(); render();
+    },
+    'pa-open'() {
+      const g = S.g;
+      if (g.phase !== 'said' || g.open) return;
+      if (online() && ACTOR !== mod(g.target) && ACTOR !== 0) return;
+      addPen(g.target, 2); g.open = true; sound.boom(); render();
+    },
+    'pa-next'() {
+      const g = S.g;
+      if (g.phase !== 'said') return;
+      Object.assign(g, { phase: 'ask', turn: nextOn(g.turn), shown: false, target: null, open: false });
+      g.q = draw('q', PARANOIA); sound.click(); render();
+    },
 
     // impostor
     'i-show'() { sound.flip(); S.g.shown = true; render(); },
@@ -1843,8 +2109,25 @@
       const v = t.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
       if (v !== t.value) t.value = v;
       S.form.code = v;
-    } else if (t.id === 'myname' || t.id === 'pname') S.form[t.id] = t.value;
+    } else if (t.id === 'myname' || t.id === 'pname' || t.id === 'cardtxt') S.form[t.id] = t.value;
   });
+
+  // ?sala=ABCD opens the join screen with the code filled in; ?juego=nunca opens that game.
+  (() => {
+    const q = new URLSearchParams(location.search);
+    const sala = (q.get('sala') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+    const juego = q.get('juego');
+    if (!sala && !juego) return;
+    history.replaceState(null, '', location.pathname);
+    S.pending = { sala, juego };
+  })();
+  function openDeepLink() {
+    const p = S.pending;
+    S.pending = null;
+    if (!p) return;
+    if (p.sala) { S.form.code = p.sala; go('online'); }
+    else if (p.juego && gameById(p.juego)) { S.game = p.juego; go('intro'); }
+  }
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
     if (e.target.id === 'code') dispatch('room-join');
@@ -1852,6 +2135,7 @@
   });
 
   render();
+  if (S.view === 'home') openDeepLink();
   </script>
 </body>
 </html>
