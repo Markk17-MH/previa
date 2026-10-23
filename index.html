@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0c0a0e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -33,7 +33,7 @@
       --edge-hi: rgba(255, 255, 255, 0.2);
       --cream: #f6f0e8;
       --muted: #aaa2ad;
-      --dim: #6e6773;
+      --dim: #918996; /* 5.7:1 on --bg, ~5:1 on glass */
       --ink: #160a10;
       --tomato: #ff5236;
       --mustard: #ffbe3b;
@@ -122,14 +122,15 @@
     /* ---------- chrome ---------- */
     .top { display: flex; align-items: center; justify-content: space-between; min-height: 44px; gap: 12px; }
     .top-title { font-weight: 700; font-size: 16px; text-align: center; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .icon-btn { width: 42px; height: 42px; flex: none; display: grid; place-items: center; border-radius: 13px; }
+    .icon-btn { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 13px; }
     .icon-btn svg { width: 20px; height: 20px; }
     .icon-btn:active { background: var(--glass-hi); }
-    .spacer { width: 42px; flex: none; }
-    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .spacer { width: 44px; flex: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
     .dim { color: var(--dim); }
     .center { text-align: center; }
-    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
     .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 8px var(--mint); flex: none; }
     .dot.off { background: var(--dim); box-shadow: none; }
 
@@ -162,7 +163,7 @@
     .btn[disabled] { opacity: 0.4; pointer-events: none; }
     .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .stackbtns { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
-    .link { color: var(--muted); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+    .link { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 8px; color: var(--muted); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
 
     /* ---------- home ---------- */
     .hero { padding: 22px 0 4px; }
@@ -205,14 +206,14 @@
     .game-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
     .game-title { font-size: 17.5px; font-weight: 700; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
     .game-blurb { color: var(--muted); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .game-meta { font-family: var(--mono); font-size: 11px; color: var(--dim); text-align: right; flex: none; }
-    .new { font-style: normal; font-family: var(--mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mint); border: 1px solid currentColor; border-radius: 6px; padding: 1px 5px; box-shadow: 0 0 10px -3px var(--mint); }
+    .game-meta { font-family: var(--mono); font-size: 12px; color: var(--dim); text-align: right; flex: none; }
+    .new { font-style: normal; font-family: var(--mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mint); border: 1px solid currentColor; border-radius: 6px; padding: 1px 5px; box-shadow: 0 0 10px -3px var(--mint); }
     .foot { color: var(--dim); font-size: 13px; text-align: center; padding-top: 6px; }
     .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 15px; }
-    .lv { min-height: 42px; border-radius: 11px; font-weight: 700; font-size: 15px; color: var(--muted); padding: 0 6px; }
+    .lv { min-height: 44px; border-radius: 11px; font-weight: 700; font-size: 15px; color: var(--muted); padding: 0 6px; }
     .lv.on { background: var(--accent); color: var(--ink); box-shadow: 0 0 18px -4px var(--accent); }
     .guides { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; justify-content: center; padding-top: 8px; }
-    .guides a { color: var(--muted); font-size: 13.5px; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--edge-hi); }
+    .guides a { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); font-size: 13.5px; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--edge-hi); }
     .guides .eyebrow { width: 100%; text-align: center; }
     .pname.wrap { white-space: normal; font-weight: 500; font-size: 15.5px; }
 
@@ -236,9 +237,10 @@
     .pname { flex: 1; font-weight: 700; font-size: 17px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .pname small { font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 6px; }
     .counter { display: flex; align-items: center; border: 1px solid var(--edge); border-radius: 10px; }
-    .counter button { width: 36px; height: 36px; font-size: 18px; color: var(--muted); }
-    .counter b { min-width: 26px; text-align: center; font-family: var(--mono); font-weight: 500; }
-    .x { width: 36px; height: 36px; color: var(--dim); display: grid; place-items: center; }
+    .counter button { width: 44px; height: 44px; font-size: 18px; color: var(--muted); border-radius: 10px; }
+    .counter b { min-width: 26px; text-align: center; font-family: var(--mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .x { width: 44px; height: 44px; color: var(--dim); display: grid; place-items: center; border-radius: 10px; }
+    .counter button:active, .x:active, .lv:active, .setting:active { background: var(--glass-hi); }
     .x svg { width: 16px; height: 16px; }
     .empty { color: var(--dim); text-align: center; padding: 24px 0; border: 1px dashed var(--edge); border-radius: var(--r); }
     .row-split { display: flex; justify-content: space-between; align-items: center; }
@@ -248,6 +250,8 @@
     .setting { display: flex; align-items: center; gap: 14px; padding: 15px 0; width: 100%; text-align: left; }
     .panel .setting + .setting { border-top: 1px solid var(--edge); }
     .setting-text { flex: 1; display: flex; flex-direction: column; }
+    .setting > svg { width: 18px; height: 18px; color: var(--dim); flex: none; }
+    .fine .link { display: inline; min-height: 0; padding: 0; }
     .setting-text small { color: var(--muted); font-size: 13.5px; }
     .switch { width: 48px; height: 28px; border-radius: 14px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--edge); position: relative; flex: none; transition: background 0.15s, box-shadow 0.15s; }
     .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--muted); transition: transform 0.15s, background 0.15s; }
@@ -281,7 +285,7 @@
     }
     .card.enter { animation: deal 0.24s cubic-bezier(.2, .8, .3, 1); }
     @keyframes deal { from { transform: translateY(12px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
-    .card-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .card-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
     .card-text { font-size: 27px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.14; flex: 1; display: flex; align-items: center; text-wrap: balance; }
     .card-text.long { font-size: 22px; }
     .card-text.xl { font-family: var(--display); font-weight: 400; font-size: 46px; letter-spacing: 0; justify-content: center; text-align: center; line-height: 1.05; }
@@ -308,7 +312,7 @@
 
     .clock { font-family: var(--mono); font-size: 72px; font-weight: 500; letter-spacing: -0.04em; text-align: center; line-height: 1; font-variant-numeric: tabular-nums; --c: var(--pink); }
     .clock.sm { font-size: 46px; }
-    .chip { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--edge); background: var(--glass); font-size: 14px; font-weight: 500; }
+    .chip { min-height: 44px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--edge); background: var(--glass); font-size: 14px; font-weight: 500; }
     .chip:active { background: var(--glass-hi); }
     .chip.on { background: var(--mint); color: var(--ink); border-color: var(--mint); box-shadow: 0 0 14px -4px var(--mint); }
     .chip.on.bad { background: var(--tomato); border-color: var(--tomato); box-shadow: 0 0 14px -4px var(--tomato); }
@@ -393,7 +397,8 @@
     .ranking li + li { border-top: 1px solid var(--edge); }
     .ranking .pos { font-family: var(--mono); color: var(--dim); width: 24px; font-size: 13px; }
     .ranking .nm { flex: 1; font-weight: 700; font-size: 17px; }
-    .ranking .ms { color: var(--muted); }
+    .ranking .ms { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .offline { color: var(--dim); font-size: 13px; font-weight: 400; margin-left: 6px; }
     .ranking li:first-child .ms { color: var(--mint); }
     .ranking li:last-child .ms { color: var(--tomato); }
 
@@ -435,7 +440,8 @@
 </head>
 <body>
   <div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
-  <div id="app"></div>
+  <div id="app" role="main"></div>
+  <div id="live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
   <script>
   'use strict';
@@ -976,6 +982,9 @@
     phones: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="8" height="14" rx="2"/><rect x="13" y="4" width="8" height="14" rx="2"/><path d="M6.5 17h1M16.5 15h1"/></svg>'
   };
 
+  // Icons always sit next to visible text or inside a labelled button, so hide them from screen readers.
+  for (const k in ic) ic[k] = ic[k].replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
+
   let lastCard = null;
   function card(label, text, color = 'pink', foot = '', extra = '') {
     const key = label + '|' + text;
@@ -1139,7 +1148,7 @@
         return `<div><h2 class="h2">Se acabó el tiempo</h2><p class="sub" style="margin-top:8px">Leed cada misión en voz alta. Si la hizo sin que le pillaran, reparte ${pen(3)}. Si le pillaron, ${pen(2)} para quien la tenía.</p></div>
         <ul class="rlist panel glass">${S.players.map((p, i) => g.m[i] ? `<li>
           <b>${esc(p.name)}</b><p>${esc(g.m[i].what)}</p><small>${esc(g.m[i].when)}</small>
-          <div class="chips"><button class="chip ${g.marks[i] === 'ok' ? 'on' : ''}" data-act="m-mark" data-arg="${i}:ok">La hizo</button><button class="chip ${g.marks[i] === 'caught' ? 'on bad' : ''}" data-act="m-mark" data-arg="${i}:caught">Le pillaron</button></div>
+          <div class="chips"><button class="chip ${g.marks[i] === 'ok' ? 'on' : ''}" data-act="m-mark" data-arg="${i}:ok" aria-pressed="${g.marks[i] === 'ok'}">La hizo</button><button class="chip ${g.marks[i] === 'caught' ? 'on bad' : ''}" data-act="m-mark" data-arg="${i}:caught" aria-pressed="${g.marks[i] === 'caught'}">Le pillaron</button></div>
         </li>` : '').join('')}</ul>
         <button class="btn hot" data-act="restart">Otra ronda</button>`;
       }
@@ -1499,9 +1508,9 @@
     gate: () => `<div class="gate">
       <h1 class="wordmark neon">Previa<span class="neon">.</span></h1>
       <p class="lede">Juegos para antes de salir, con preguntas picantes y castigos con bebida. Solo para mayores de 18.</p>
-      <div class="panel glass"><button class="setting" data-act="toggle" data-arg="sober">
+      <div class="panel glass"><button class="setting" data-act="toggle" data-arg="sober" role="switch" aria-checked="${S.sober}">
         <span class="setting-text"><b>Jugar sin alcohol</b><small>Los tragos se cambian por puntos</small></span>
-        <span class="switch ${S.sober ? 'on' : ''}" role="switch" aria-checked="${S.sober}"></span>
+        <span class="switch ${S.sober ? 'on' : ''}" aria-hidden="true"></span>
       </button></div>
       <button class="btn hot" data-act="adult">Tengo 18 años o más</button>
       <p class="fine center">Puedes cambiarlo cuando quieras en Ajustes.</p>
@@ -1575,14 +1584,14 @@
       return `<header class="top">${backBtn()}<span class="top-title">Tus cartas</span><span class="spacer"></span></header>
       <div><h2 class="h2">Las cartas de tu grupo</h2><p class="sub" style="margin-top:6px">Escribid vuestras propias frases. Se mezclan con las de la app y se guardan en este móvil.</p></div>
       <div class="levels glass">${Object.entries(kinds).map(([k, l]) => `<button class="lv ${S.cardKind === k ? 'on' : ''}" data-act="ckind" data-arg="${k}">${l} · ${(S.custom[k] || []).length}</button>`).join('')}</div>
-      <form class="add" data-submit="add-card"><input class="input" id="cardtxt" name="t" maxlength="140" placeholder="${ph[S.cardKind]}" autocomplete="off" enterkeyhint="done" value="${esc(S.form.cardtxt || '')}" /><button class="btn hot sm" type="submit">Añadir</button></form>
+      <form class="add" data-submit="add-card"><input class="input" id="cardtxt" name="t" maxlength="140" placeholder="${ph[S.cardKind]}" aria-label="Texto de la carta nueva" autocomplete="off" enterkeyhint="done" value="${esc(S.form.cardtxt || '')}" /><button class="btn hot sm" type="submit">Añadir</button></form>
       ${list.length ? `<ul class="plist panel glass">${list.map((t, i) => `<li><span class="pname wrap">${S.cardKind === 'nunca' ? 'Yo nunca ' : ''}${esc(t)}</span><button class="x" data-act="del-card" data-arg="${i}" aria-label="Borrar">${ic.x}</button></li>`).join('')}</ul>`
         : `<p class="empty">Todavía no hay ninguna.</p>`}`;
     },
 
     players: () => `<header class="top">${backBtn()}<span class="top-title">Grupo</span><span class="spacer"></span></header>
       <div><h2 class="h2">¿Quién juega?</h2><p class="sub" style="margin-top:6px">Para jugar todos con este móvil. Se guarda solo aquí.</p></div>
-      <form class="add" data-submit="add"><input class="input" id="pname" name="n" maxlength="16" placeholder="Nombre" autocomplete="off" enterkeyhint="done" value="${esc(S.form.pname)}" /><button class="btn hot sm" type="submit">Añadir</button></form>
+      <form class="add" data-submit="add"><input class="input" id="pname" name="n" maxlength="16" placeholder="Nombre" aria-label="Nombre del jugador" autocomplete="off" enterkeyhint="done" value="${esc(S.form.pname)}" /><button class="btn hot sm" type="submit">Añadir</button></form>
       ${S.players.length ? `<ul class="plist panel glass">${S.players.map((p, i) => `<li>
         <span class="av" style="--c:${colorOf(i)}">${esc(p.name[0].toUpperCase())}</span>
         <span class="pname">${esc(p.name)}</span>
@@ -1596,8 +1605,8 @@
     online: () => `<header class="top">${backBtn()}<span class="top-title">Cada uno en su móvil</span><span class="spacer"></span></header>
       <div><h2 class="h2">Una sala, todos los móviles</h2><p class="sub" style="margin-top:8px">Uno crea la sala y el resto entra con el código. Cada uno ve sus secretos en su pantalla. Hace falta internet.</p></div>
       <label class="field"><span class="eyebrow">Tu nombre</span><input class="input" id="myname" maxlength="16" placeholder="Cómo te llaman" autocomplete="off" value="${esc(S.form.myname)}" /></label>
-      ${S.netErr ? `<p class="warn">${esc(S.netErr)}</p>` : ''}
-      ${S.netBusy ? `<p class="busy">${S.netBusy}</p>` : `
+      ${S.netErr ? `<p class="warn" role="alert">${esc(S.netErr)}</p>` : ''}
+      ${S.netBusy ? `<p class="busy" role="status">${S.netBusy}</p>` : `
       <button class="btn hot" data-act="room-create">Crear sala</button>
       <div class="or">o entra en una</div>
       <div class="panel glass pad">
@@ -1610,8 +1619,8 @@
       const g = host ? null : gameById(S.game);
       const list = S.players.length ? `<ul class="plist panel glass">${S.players.map((p, i) => `<li>
           <span class="av ${p.off ? 'off' : ''}" style="--c:${colorOf(i)}">${esc(p.name[0].toUpperCase())}</span>
-          <span class="pname">${esc(p.name)}${i === 0 ? '<small>anfitrión</small>' : ''}${p.id === net.me && i !== 0 ? '<small>tú</small>' : ''}</span>
-          <span class="dot ${p.off ? 'off' : ''}" title="${p.off ? 'Desconectado' : 'Conectado'}"></span>
+          <span class="pname">${esc(p.name)}${i === 0 ? '<small>anfitrión</small>' : ''}${p.id === net.me && i !== 0 ? '<small>tú</small>' : ''}${p.off ? '<span class="offline">desconectado</span>' : ''}</span>
+          <span class="dot ${p.off ? 'off' : ''}" aria-hidden="true"></span>
           ${host && p.off ? `<button class="x" data-act="room-kick" data-arg="${i}" aria-label="Quitar">${ic.x}</button>` : ''}
         </li>`).join('')}</ul>` : `<p class="busy">Conectando…</p>`;
       const waiting = host ? '' : S.hostView === 'intro' && g
@@ -1637,9 +1646,9 @@
 
     settings: () => `<header class="top">${backBtn()}<span class="top-title">Ajustes</span><span class="spacer"></span></header>
       <div class="panel glass">
-        <button class="setting" data-act="toggle" data-arg="sober"><span class="setting-text"><b>Modo sin alcohol</b><small>Los castigos se cuentan en puntos, no en tragos</small></span><span class="switch ${S.sober ? 'on' : ''}"></span></button>
+        <button class="setting" data-act="toggle" data-arg="sober" role="switch" aria-checked="${S.sober}"><span class="setting-text"><b>Modo sin alcohol</b><small>Los castigos se cuentan en puntos, no en tragos</small></span><span class="switch ${S.sober ? 'on' : ''}" aria-hidden="true"></span></button>
         <button class="setting" data-act="nav" data-arg="cartas"><span class="setting-text"><b>Tus cartas</b><small>Añade vuestros propios «yo nunca», verdades y retos</small></span>${ic.chev}</button>
-        <button class="setting" data-act="toggle" data-arg="sound"><span class="setting-text"><b>Sonido y vibración</b><small>Efectos al pasar cartas y en las cuentas atrás</small></span><span class="switch ${sound.on ? 'on' : ''}"></span></button>
+        <button class="setting" data-act="toggle" data-arg="sound" role="switch" aria-checked="${sound.on}"><span class="setting-text"><b>Sonido y vibración</b><small>Efectos al pasar cartas y en las cuentas atrás</small></span><span class="switch ${sound.on ? 'on' : ''}" aria-hidden="true"></span></button>
         <button class="setting" data-act="wipe"><span class="setting-text"><b>Borrar datos</b><small>Quita el grupo, el marcador y las preferencias</small></span></button>
       </div>
       <p class="fine">Previa no guarda cuentas ni datos en ningún servidor. En las salas online, los nombres viajan directamente entre los móviles de la sala. <a class="link" href="privacidad.html">Política de privacidad</a></p>
@@ -1683,9 +1692,54 @@
     if (S.g && S.g.rid !== L.rid) { L.rid = S.g.rid; L.mine = false; L.rx = null; L.rxRound = null; clearTimeout(L.t); }
     rxLocal();
     const view = VIEWS[S.view] ? S.view : 'home';
-    $app.innerHTML = VIEWS[view]() + (S.sheet ? `<div class="scrim" data-act="close-sheet"></div><div class="sheet" role="dialog">${S.sheet}</div>` : '');
-    if (S.focus) { const el = document.getElementById(S.focus); if (el) el.focus(); S.focus = null; }
+    const hadSheet = !!$app.querySelector('.sheet');
+    const prevFocus = focusKey();
+    $app.innerHTML = VIEWS[view]() + (S.sheet ? `<div class="scrim" data-act="close-sheet"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="Detalles" tabindex="-1">${S.sheet}</div>` : '');
+    restoreFocus(prevFocus, view, hadSheet);
+    announce();
+    renderedView = view;
     sync();
+  }
+
+  // The whole screen is redrawn on every change, so put keyboard focus back where it was:
+  // on the same control if it still exists, on the open sheet, or on the new screen's title.
+  let renderedView = null;
+  const sel = (k, v) => `[${k}="${CSS.escape(v)}"]`;
+  function focusKey() {
+    const a = document.activeElement;
+    if (!a || !$app.contains(a)) return null;
+    if (a.id) return '#' + CSS.escape(a.id);
+    if (a.dataset.act) return sel('data-act', a.dataset.act) + (a.dataset.arg != null ? sel('data-arg', a.dataset.arg) : '');
+    if (a.dataset.tap) return sel('data-tap', a.dataset.tap);
+    return null;
+  }
+  let sheetOpener = null;
+  function restoreFocus(key, view, hadSheet) {
+    const opt = { preventScroll: true };
+    if (S.focus) { const el = document.getElementById(S.focus); S.focus = null; if (el) { el.focus(); return; } }
+    const sheet = $app.querySelector('.sheet');
+    if (sheet && !hadSheet) { sheetOpener = key; sheet.focus(opt); return; }
+    if (!sheet && hadSheet) {
+      const opener = sheetOpener && $app.querySelector(sheetOpener);
+      sheetOpener = null;
+      if (opener) { opener.focus(opt); return; }
+      key = key || 'sheet';
+    }
+    const same = key && key !== 'sheet' && $app.querySelector(key);
+    if (same && (!sheet || sheet.contains(same))) { same.focus(opt); return; }
+    if (!key || sheet) return;
+    // The control that had focus is gone: land on what replaced it (the new card or result), or the screen title.
+    const order = view === renderedView ? ['.card', '.verdict', '.shout', '.count', '.top-title', 'h1', 'h2'] : ['.top-title', 'h1', 'h2'];
+    const target = order.map(s => $app.querySelector(s)).find(Boolean);
+    if (target) { target.tabIndex = -1; target.focus(opt); }
+  }
+  // Read the new card, result or countdown aloud for screen reader users.
+  const $live = document.getElementById('live');
+  let lastSaid = '';
+  function announce() {
+    const el = $app.querySelector('.sheet, .verdict, .shout, .count, .card');
+    const t = el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
+    if (t && t !== lastSaid) { lastSaid = t; $live.textContent = t; }
   }
 
   // Android hardware back / browser back returns to the menu.
@@ -2129,6 +2183,19 @@
     else if (p.juego && gameById(p.juego)) { S.game = p.juego; go('intro'); }
   }
   document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && S.sheet) { e.preventDefault(); S.sheet = null; render(); return; }
+    // Keep Tab inside an open sheet.
+    if (e.key === 'Tab' && S.sheet) {
+      const sheet = $app.querySelector('.sheet');
+      const f = sheet ? [...sheet.querySelectorAll('button, [href], input')] : [];
+      if (f.length) {
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && (document.activeElement === first || document.activeElement === sheet)) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        else if (!sheet.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+      }
+      return;
+    }
     if (e.key !== 'Enter') return;
     if (e.target.id === 'code') dispatch('room-join');
     else if (e.target.id === 'myname' && !S.form.code) e.target.blur();

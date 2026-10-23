@@ -178,7 +178,7 @@ const page = p => {
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Tilt+Neon&display=swap" rel="stylesheet">
   <script type="application/ld+json">${JSON.stringify(faqLd)}</script>
   <style>
-    :root { color-scheme: dark; --bg: #0c0a0e; --cream: #f6f0e8; --muted: #aaa2ad; --dim: #6e6773; --edge: rgba(255,255,255,.11); --pink: #ff4fa0; --mustard: #ffbe3b; --ink: #160a10; }
+    :root { color-scheme: dark; --bg: #0c0a0e; --cream: #f6f0e8; --muted: #aaa2ad; --dim: #918996; --edge: rgba(255,255,255,.11); --pink: #ff4fa0; --mustard: #ffbe3b; --ink: #160a10; }
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--bg) radial-gradient(90vmax 70vmax at 0% 0%, rgba(255,79,160,.16), transparent 60%); color: var(--cream); font: 17px/1.6 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
     main { max-width: 680px; margin: 0 auto; padding: 28px max(18px, env(safe-area-inset-right, 0px)) 56px max(18px, env(safe-area-inset-left, 0px)); }
@@ -194,7 +194,8 @@ const page = p => {
     .tip { border: 1px solid var(--edge); border-radius: 18px; padding: 16px 18px; background: rgba(255,255,255,.04); margin-top: 32px; }
     dl dt { font-weight: 700; margin-top: 16px; } dl dd { margin: 4px 0 0; color: var(--muted); }
     nav.more { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--edge); }
-    nav.more a, footer a { color: var(--muted); }
+    nav.more a, footer a { color: var(--muted); display: inline-flex; align-items: center; min-height: 44px; }
+    a:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
     footer { color: var(--dim); font-size: 14px; margin-top: 28px; }
   </style>
 </head>
