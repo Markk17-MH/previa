@@ -164,6 +164,10 @@ const page = p => {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0c0a0e" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; base-uri 'none'; form-action 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="author" content="Markk17-MH" />
+  <meta name="copyright" content="© 2026 Markk17-MH. Todos los derechos reservados." />
   <title>${esc(p.title)} · Previa</title>
   <meta name="description" content="${esc(p.desc)}" />
   <link rel="canonical" href="${url}" />
@@ -211,7 +215,7 @@ const page = p => {
     <dl>${p.faq.map(([q, a]) => `<dt>${q}</dt><dd>${a}</dd>`).join('')}</dl>
     <a class="cta" href="${cta}">Abrir Previa</a>
     <nav class="more" aria-label="Más guías">${others}</nav>
-    <footer>Previa es para mayores de 18. Bebe con moderación y nunca conduzcas si has bebido. <a href="privacidad.html">Privacidad</a></footer>
+    <footer>Previa es para mayores de 18. Bebe con moderación y nunca conduzcas si has bebido. <a href="privacidad.html">Privacidad</a><br>© 2026 Previa · Markk17-MH. Todos los derechos reservados.</footer>
   </main>
 </body>
 </html>
