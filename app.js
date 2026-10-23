@@ -534,12 +534,32 @@ const every = (ms, fn) => clocks.push(setInterval(fn, ms));
 const after = (ms, fn) => clocks.push(setTimeout(fn, ms));
 const clearClock = () => { clocks.forEach(id => { clearInterval(id); clearTimeout(id); }); clocks = []; };
 
+// One drawn mark per game, same 24px grid and 1.7 stroke as the interface icons.
+const GAME_ICON = {
+  mision: '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.4"/><path d="M12 2v3.5M12 18.5V22M2 12h3.5M18.5 12H22"/>',
+  verdad: '<path d="M4 5h16v11H10l-6 4z"/><path d="M10 9.3a2.1 2.1 0 1 1 3 1.9c-.6.3-1 .8-1 1.4"/><circle cx="12" cy="14.4" r=".6" fill="currentColor"/>',
+  nunca: '<path d="M6 4h12l-1.6 15.2A1.6 1.6 0 0 1 14.8 21H9.2a1.6 1.6 0 0 1-1.6-1.8z"/><path d="M6.6 9.5h10.8"/>',
+  probable: '<circle cx="16.5" cy="7" r="2.6"/><path d="M11.5 20.5c.4-3.6 2.4-5.8 5-5.8s4.6 2.2 5 5.8"/><path d="M2.5 12H9M6.5 9.5 9 12l-2.5 2.5"/>',
+  bomba: '<circle cx="10.5" cy="14" r="6.5"/><path d="M15.2 9.3 17.6 7"/><path d="M19.2 3.8 20.4 2.6M20.6 6.8h1.7M17.4 2.4V.9"/>',
+  paranoia: '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  impostor: '<path d="M4 6c3.2 1.1 12.8 1.1 16 0v5.2c0 4.8-3.8 8.3-8 8.3s-8-3.5-8-8.3z"/><path d="M7.8 11.2h2.8M13.4 11.2h2.8M10 15.5c1.3.8 2.7.8 4 0"/>',
+  mentira: '<path d="M10 6h10M10 12h10M10 18h10"/><path d="M3.5 6 5 7.5 7.5 5M3.5 12 5 13.5 7.5 11M3.8 16.7l3.2 3.2M7 16.7l-3.2 3.2"/>',
+  mayor: '<rect x="3" y="4" width="11" height="16" rx="2"/><path d="M19 4v16M16.5 6.5 19 4l2.5 2.5M16.5 17.5 19 20l2.5-2.5"/>',
+  copa: '<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/>',
+  esto: '<path d="M12 21v-8M12 13 5.5 6.5M12 13l6.5-6.5M5 11V6h5M19 11V6h-5"/>',
+  reflejos: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  ruleta: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1.6"/><path d="M12 3v7.4M12 13.6V21M3 12h7.4M13.6 12H21M5.6 5.6l5.3 5.3M13.1 13.1l5.3 5.3"/>',
+  mimica: '<circle cx="12" cy="4.6" r="2.1"/><path d="M12 7.5v7M12 14.5 8.8 21M12 14.5l3.2 6.5M5.5 8.5 12 10.6l6.5-4.6"/>'
+};
+const gameIcon = id => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${GAME_ICON[id] || ''}</svg>`;
+
 const ic = {
   back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
   chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
   gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
   help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17.5" r=".6" fill="currentColor"/></svg>',
   x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c.5-3.6 2.9-5.6 6-5.6s5.5 2 6 5.6"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18 14.6c1.7.7 2.8 2.4 3 5.4"/></svg>',
   crown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>',
   phones: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="8" height="14" rx="2"/><rect x="13" y="4" width="8" height="14" rx="2"/><path d="M6.5 17h1M16.5 15h1"/></svg>'
 };
@@ -563,7 +583,9 @@ const turn = i => isMe(i)
   ? `<div class="turn"><b class="neon">Te toca</b></div>`
   : `<div class="turn"><span class="eyebrow">Turno de</span><b>${name(i)}</b></div>`;
 const waitFor = (i, what) => `<p class="sub center wait">Esperando a que <b>${name(i)}</b> ${what}…</p>`;
-const verdict = (label, big, text, color = 'pink') => `<div class="verdict glass lit" style="--c:var(--${color})"><span class="eyebrow">${label}</span><h2 class="neon">${big}</h2>${text ? `<p>${text}</p>` : ''}</div>`;
+const verdict = (label, big, text, color = 'pink') => `<div class="verdict glass lit" style="--c:var(--${color})"><h2><span class="lead">${label}</span><span class="big neon">${big}</span></h2>${text ? `<p>${text}</p>` : ''}</div>`;
+// Pass-the-phone progress: one segment per player, the current one lit.
+const progress = (i, n) => `<div class="progress" role="img" aria-label="${i + 1} de ${n}">${Array.from({ length: n }, (_, k) => `<i class="${k < i ? 'done' : k === i ? 'now' : ''}"></i>`).join('')}</div>`;
 
 // shared 3-2-1 countdown stored in S.g.cd (null → 3 → 2 → 1 → 0)
 function countdown() {
@@ -683,7 +705,7 @@ const GAMES = [
       const g = S.g, n = S.players.length;
       if (g.phase === 'deal') {
         const me = g.m[g.i];
-        return `<div class="pass"><span class="eyebrow">Misión ${g.i + 1} de ${n}</span><h2 class="pass-name">Pásale el móvil a<b class="neon">${name(g.i)}</b></h2></div>
+        return `<div class="pass"><h2 class="pass-name">Pásale el móvil a<b class="neon">${name(g.i)}</b></h2>${progress(g.i, n)}</div>
         ${!g.shown
           ? `<button class="reveal" data-act="m-show"><b>Ver mi misión</b><span>Que nadie más mire la pantalla</span></button>`
           : `${card('Qué', esc(me.what), 'tomato')}
@@ -796,10 +818,10 @@ const GAMES = [
       }
       if (g.state === 'running') {
         if (online() && !isMe(g.holder)) {
-          return `<p class="sub center">${g.cat}</p><div class="fuse glass"><span class="eyebrow">Lo tiene</span><b class="neon" style="--c:var(--mustard)">${name(g.holder)}</b></div>`;
+          return `<p class="sub center">${g.cat}</p><div class="fuse glass"><span class="lead">Lo tiene</span><b class="neon" style="--c:var(--mustard)">${name(g.holder)}</b></div>`;
         }
         return `<p class="sub center">${g.cat}</p>
-        <div class="fuse glass lit" style="--c:var(--tomato)"><span class="eyebrow">${online() ? '¡La tienes tú!' : 'Lo tiene'}</span><b class="neon" style="--c:var(--tomato)">${online() ? 'Di una y pasa' : name(g.holder)}</b></div>
+        <div class="fuse glass lit" style="--c:var(--tomato)"><span class="lead">${online() ? '¡La tienes tú!' : 'Lo tiene'}</span><b class="neon" style="--c:var(--tomato)">${online() ? 'Di una y pasa' : name(g.holder)}</b></div>
         <button class="btn hot passbtn" data-tap="b-pass">${online() ? `Pasar a ${name(nextOn(g.holder))}` : 'Pasar'}</button>`;
       }
       return `${verdict('Explotó en manos de', isMe(g.holder) ? 'Ti' : name(g.holder), pen(3), 'tomato')}
@@ -821,7 +843,7 @@ const GAMES = [
       if (g.phase === 'ask') {
         if (online() && !isMe(g.turn)) return `${turn(g.turn)}${verdict('Pregunta secreta', '¿?', `${name(g.turn)} está leyendo su pregunta…`, 'lilac')}`;
         if (!online() && !g.shown) {
-          return `<div class="pass"><span class="eyebrow">Pregunta secreta</span><h2 class="pass-name">Pásale el móvil a<b class="neon">${name(g.turn)}</b></h2></div>
+          return `<div class="pass"><h2 class="pass-name">Pregunta secreta para<b class="neon">${name(g.turn)}</b></h2></div>
           <button class="reveal" data-act="pa-show"><b>Ver la pregunta</b><span>Que nadie más mire la pantalla</span></button>`;
         }
         return `${turn(g.turn)}${card('Solo para ti', g.q, 'lilac', 'Contesta en voz alta con un nombre y tócalo:')}
@@ -855,7 +877,7 @@ const GAMES = [
         ? card('Tu papel', 'Eres el impostor', 'tomato', `Categoría: ${g.cat}. Escucha y disimula.`, 'xl')
         : card('La palabra', g.word, 'mint', `Categoría: ${g.cat}`, 'xl');
       if (g.phase === 'deal') {
-        return `<div class="pass"><span class="eyebrow">${g.i + 1} de ${n}</span><h2 class="pass-name">Pásale el móvil a<b class="neon">${name(g.i)}</b></h2></div>
+        return `<div class="pass"><h2 class="pass-name">Pásale el móvil a<b class="neon">${name(g.i)}</b></h2>${progress(g.i, n)}</div>
         ${!g.shown
           ? `<button class="reveal" data-act="i-show"><b>Ver mi palabra</b><span>Que nadie más mire la pantalla</span></button>`
           : `${secret(g.i)}<button class="btn" data-act="i-next">${g.i + 1 < n ? 'Ocultar y pasar' : 'Ocultar y empezar'}</button>`}`;
@@ -1025,7 +1047,7 @@ const GAMES = [
     view() {
       const g = S.g;
       const shown = g.spinning ? (g.flash != null ? name(g.flash) : '¿?') : g.who != null ? (isMe(g.who) ? 'Ti' : name(g.who)) : '¿?';
-      return `<div class="spin glass ${g.res && !g.spinning ? 'lit' : ''}" style="--c:var(--pink)"><span class="eyebrow">${g.spinning ? 'Girando' : g.who != null ? 'Le toca a' : 'La ruleta'}</span><b class="neon" id="spin">${shown}</b></div>
+      return `<div class="spin glass ${g.res && !g.spinning ? 'lit' : ''}" style="--c:var(--pink)"><span class="lead">${g.spinning ? 'Girando' : g.who != null ? 'Le toca a' : 'La ruleta'}</span><b class="neon" id="spin">${shown}</b></div>
       ${g.res && !g.spinning ? card('Le toca', g.res, 'pink') : ''}
       <div class="stackbtns"><button class="btn hot" data-act="r-spin" ${g.spinning ? 'disabled' : ''}>${g.who == null ? 'Girar' : 'Girar otra vez'}</button></div>`;
     }
@@ -1081,37 +1103,39 @@ const VIEWS = {
   home: () => {
     const n = S.players.length;
     const list = S.players.map((p, i) => ({ p, i }));
-    const roomStrip = isHost()
-      ? `<button class="strip glass lit" style="--c:var(--mint)" data-act="nav" data-arg="room">
-          <span class="glyph">${ic.phones}</span>
-          <span class="strip-text"><b>Sala ${net.code}</b><small>${active().length} en la sala · toca para ver el código</small></span>${ic.chev}</button>`
-      : `<button class="strip glass" style="--c:var(--mint)" data-act="nav" data-arg="online">
-          <span class="glyph">${ic.phones}</span>
-          <span class="strip-text"><b>Jugar cada uno en su móvil</b><small>Crea una sala o entra con un código</small></span>${ic.chev}</button>`;
+    const status = isHost() ? `<span class="pill glass"><span class="dot"></span>Sala ${net.code}</span>`
+      : S.sober ? '<span class="pill glass">Sin alcohol</span>' : '<span></span>';
+    const who = isHost()
+      ? `<button class="setup-row" data-act="nav" data-arg="room">
+          <span class="glyph" style="--c:var(--mint)">${ic.phones}</span>
+          <span class="strip-text"><b>Sala ${net.code}</b><small>${active().length} en la sala · ver el código e invitar</small></span>${ic.chev}</button>`
+      : `<button class="setup-row" data-act="nav" data-arg="players">
+          ${n ? `<span class="avatars">${avatars(list)}</span>` : `<span class="glyph" style="--c:var(--pink)">${ic.users}</span>`}
+          <span class="strip-text"><b>${n ? `${n} ${n === 1 ? 'jugador' : 'jugadores'}` : 'Añade al grupo'}</b><small>${n ? S.players.map(p => esc(p.name)).join(', ') : 'Los nombres reparten los turnos'}</small></span>${ic.chev}</button>`;
     return `<header class="top">
-      <span class="pill glass">${isHost() ? '<span class="dot"></span>En línea' : S.sober ? 'Sin alcohol' : 'Con moderación'}</span>
+      ${status}
       <button class="icon-btn glass" data-act="nav" data-arg="settings" aria-label="Ajustes">${ic.gear}</button>
     </header>
     <section class="hero">
       <h1 class="wordmark neon">Previa<span class="neon">.</span></h1>
       <p class="lede">${GAMES.length} juegos para antes de salir. En un solo móvil o cada uno en el suyo.</p>
     </section>
-    <div class="field">
-      <div class="levels glass" role="radiogroup" aria-label="Nivel">${Object.entries(LEVELS).map(([k, l]) => `<button class="lv ${S.level === k ? 'on' : ''}" data-act="level" data-arg="${k}" role="radio" aria-checked="${S.level === k}">${l}</button>`).join('')}</div>
-      <p class="fine center">${LEVEL_HINT[S.level]}</p>
-    </div>
+    <section class="setup glass" aria-label="Cómo vais a jugar">
+      ${who}
+      <div class="setup-levels">
+        <div class="levels" role="radiogroup" aria-label="Nivel">${Object.entries(LEVELS).map(([k, l]) => `<button class="lv ${S.level === k ? 'on' : ''}" data-act="level" data-arg="${k}" role="radio" aria-checked="${S.level === k}">${l}</button>`).join('')}</div>
+        <p class="fine">${LEVEL_HINT[S.level]}</p>
+      </div>
+      ${isHost() ? '' : `<button class="setup-row" data-act="nav" data-arg="online">
+        <span class="glyph" style="--c:var(--mint)">${ic.phones}</span>
+        <span class="strip-text"><b>Cada uno en su móvil</b><small>Crea una sala o entra con un código</small></span>${ic.chev}</button>`}
+    </section>
     ${S.players.some(p => p.score > 0) ? `<button class="strip glass lit" style="--c:var(--mustard)" data-act="nav" data-arg="summary">
       <span class="glyph">${ic.crown}</span>
       <span class="strip-text"><b>Cerrar la previa</b><small>Ver quién se lleva la corona y compartirlo</small></span>${ic.chev}</button>` : ''}
-    ${isHost() ? '' : `<button class="strip glass" data-act="nav" data-arg="players">
-      ${n ? `<span class="avatars">${avatars(list)}</span>` : ''}
-      <span class="strip-text"><b>${n ? `${n} ${n === 1 ? 'jugador' : 'jugadores'} en este móvil` : 'Jugar en este móvil'}</b><small>${n ? S.players.map(p => esc(p.name)).join(', ') : 'Añade al grupo para repartir turnos'}</small></span>
-      ${ic.chev}
-    </button>`}
-    ${roomStrip}
-    <div class="list-head"><span class="eyebrow">Juegos</span><span class="eyebrow dim">${String(GAMES.length).padStart(2, '0')}</span></div>
+    <h2 class="section-title">Juegos <span>${GAMES.length}</span></h2>
     <ul class="games glass">${GAMES.map((g, i) => `<li><button class="game" data-act="open" data-arg="${g.id}">
-      <span class="tile neon" style="--c:var(--${g.color})">${i + 1}</span>
+      <span class="tile" style="--c:var(--${g.color})">${gameIcon(g.id)}</span>
       <span class="game-text"><span class="game-title">${g.title}${g.isNew ? '<em class="new">Nuevo</em>' : ''}</span><span class="game-blurb">${g.short}</span></span>
       <span class="game-meta">${g.min}+</span>
     </button></li>`).join('')}</ul>
@@ -1186,7 +1210,8 @@ const VIEWS = {
         ${host && p.off ? `<button class="x" data-act="room-kick" data-arg="${i}" aria-label="Quitar">${ic.x}</button>` : ''}
       </li>`).join('')}</ul>` : `<p class="busy">Conectando…</p>`;
     const waiting = host ? '' : S.hostView === 'intro' && g
-      ? `<div class="intro-hero glass lit" style="--c:var(--${g.color})"><span class="eyebrow">${name(0)} ha elegido</span><h2 class="neon">${g.title}</h2><p>${g.blurb}</p></div>
+      ? `<div class="intro-hero glass lit" style="--c:var(--${g.color})"><span class="tile lg">${gameIcon(g.id)}</span><h2><span class="lead">${name(0)} ha elegido</span><span class="neon">${g.title}</span></h2><p>${g.blurb}</p></div>
+         <h3 class="section-title sm">Cómo se juega</h3>
          <ol class="rules">${g.rules().map(r => `<li>${r}</li>`).join('')}</ol>`
       : S.players.length ? `<p class="sub center">Esperando a que <b>${name(0)}</b> elija juego…</p>` : '';
     return `<header class="top">${backBtn(host ? 'Volver' : 'Salir de la sala')}<span class="top-title">Sala</span><span class="spacer"></span></header>
@@ -1197,7 +1222,7 @@ const VIEWS = {
     </div>
     ${host ? `<p class="sub center">Los demás abren Previa, tocan <b>Jugar cada uno en su móvil</b> y escriben el código.</p>` : ''}
     ${waiting}
-    <span class="eyebrow">${active().length} en la sala</span>
+    <h3 class="section-title sm">En la sala <span>${active().length}</span></h3>
     ${list}
     <div class="stackbtns">
       ${host ? `<button class="btn hot" data-act="nav" data-arg="home">Elegir juego</button>` : ''}
@@ -1220,11 +1245,11 @@ const VIEWS = {
     const g = gameById(S.game), i = GAMES.indexOf(g), n = active().length;
     return `<header class="top">${backBtn()}<span class="spacer"></span></header>
     <div class="intro-hero glass lit" style="--c:var(--${g.color})">
-      <span class="eyebrow">${String(i + 1).padStart(2, '0')} / ${String(GAMES.length).padStart(2, '0')}${online() ? ' · Sala ' + net.code : ''}</span>
+      <span class="tile lg">${gameIcon(g.id)}</span>
       <h2 class="neon">${g.title}</h2><p>${g.blurb}</p>
-      <div class="chips"><span>${g.min}+ jugadores</span><span>${g.time}</span></div>
+      <div class="chips"><span>${g.min}+ jugadores</span><span>${g.time}</span>${online() ? `<span>Sala ${net.code}</span>` : ''}</div>
     </div>
-    <span class="eyebrow">Cómo se juega</span>
+    <h3 class="section-title sm">Cómo se juega</h3>
     <ol class="rules">${g.rules().map(r => `<li>${r}</li>`).join('')}</ol>
     <div class="stackbtns">${n >= g.min
       ? `<button class="btn hot" data-act="start">Empezar${online() ? ' en todos los móviles' : ''}</button>`
